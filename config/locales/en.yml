@@ -33,3 +33,4 @@ en:
       synchronize: "Load from the Information Manager"
     managers:
       header: "Managers"
+      deploy_at: "Deploy manager"

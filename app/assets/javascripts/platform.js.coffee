@@ -60,3 +60,19 @@
       console.log status
       console.log data
     )
+
+  $scope.deployManager = (managerType, nodeToDeployAt) =>
+    console.log "Manager type: #{managerType} --- Node to deploy at: #{nodeToDeployAt}"
+
+    $http({
+      url: '/platform/deployManager',
+      method: "POST",
+      data: { 'worker_node_id': nodeToDeployAt.id, 'managerType': managerType}
+    }).success((data, status, headers, config) =>
+      $scope.worker_nodes = data.worker_nodes
+      $scope.managers = data.managers
+    ).error((data, status, headers, config) =>
+      console.log "Error"
+      console.log status
+      console.log data
+    )

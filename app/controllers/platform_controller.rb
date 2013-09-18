@@ -45,6 +45,19 @@ class PlatformController < ApplicationController
     render json: { status: 'ok' }
   end
 
+  def deployManager
+    manager_type = params[:managerType]
+    worker_node_id = params[:worker_node_id]
+
+    # deployment procedure
+    # 1. upload and start the code of the selected manager type at the specified worker node
+    # 2. update and restart load balance of the selected manager type
+    # 3. create new manager instance locally unless error in previous step
+    # 4. return the local manager instance as json object
+
+    raise 'not implemented'
+  end
+
   protected
 
   def load_information_manager
