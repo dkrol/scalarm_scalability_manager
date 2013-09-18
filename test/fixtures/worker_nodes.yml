@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  url: MyString
+  experiment_manager_compatible: false
+  storage_manager_compatible: false
+  simulation_manager_compatible: false
+  ignored: false
+  occupied_by: 
+
+two:
+  url: MyString
+  experiment_manager_compatible: false
+  storage_manager_compatible: false
+  simulation_manager_compatible: false
+  ignored: false
+  occupied_by: 

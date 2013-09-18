@@ -21,3 +21,11 @@
 
 en:
   hello: "Hello world"
+  title: "Scalarm Scalability Manager"
+  platform:
+    worker_nodes:
+      header: "Worker nodes"
+      url: "URL:"
+      created_at: "Created at:"
+    managers:
+      header: "Managers"

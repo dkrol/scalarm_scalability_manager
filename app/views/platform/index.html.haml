@@ -1,0 +1,28 @@
+%div(ng-controller="PlatformCtrl")
+  #worker-nodes(style="display: none;")= @worker_nodes.to_json
+  #managers(style="display: none;")= @managers.to_json
+
+  %section.panel.radius
+    %h3
+      = t('platform.worker_nodes.header')
+    %ul.no-bullet
+      %li(ng-repeat="node in worker_nodes")
+        = t('platform.worker_nodes.url')
+        {{ node.url }}
+        \---
+        = t('platform.worker_nodes.created_at')
+        {{ node.created_at }}
+
+  %section.panel.radius(ng-repeat="(manager_type, manager_list) in managers")
+    %h3
+      {{ manager_type }}
+    %ul.no-bullet
+      %li(ng-repeat="manager in manager_list")
+        = t('platform.worker_nodes.url')
+        {{ manager.url }}
+        \---
+        = t('platform.worker_nodes.created_at')
+        {{ manager.created_at }}
+
+  %article(style="text-align: center;")
+    = button_to 'Synchronize', platform_synchronize_path, class: 'button'

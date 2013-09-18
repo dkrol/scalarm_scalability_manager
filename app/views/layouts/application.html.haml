@@ -1,0 +1,50 @@
+%html(ng-app)
+  %head
+    %meta(charset="utf-8")
+    -#Set the viewport width to device width for mobile
+    %meta(name="viewport" content="width=device-width, initial-scale=1.0")
+
+    %tite
+      - content_for?(:title) ? yield(:title) : 'Scalarm Scalability Manager'
+
+    = stylesheet_link_tag 'https://fonts.googleapis.com/css?family=Ubuntu'
+    = stylesheet_link_tag 'application'
+    = csrf_meta_tags
+    = javascript_include_tag 'vendor/custom.modernizr'
+    = javascript_include_tag 'application'
+  %body
+    = render 'layouts/navbar'
+
+    #wrapper
+      %header
+        %h1#site_title
+          = t('title')
+
+        = link_to image_tag('cyfronet_logo.png', style: 'float: right;'), 'http://www.cyfronet.pl'
+        = link_to image_tag('eda_logo.png'), 'http://www.eda.europa.eu'
+      .clearall
+
+      .notice.alert-box.radius.success(style="display: none;")
+        = flash[:notice] if flash[:notice]
+      - content_for :javascript do
+        = javascript_tag("$('.notice').show();") if flash[:notice]
+
+      .error.alert-box.alert.radius(style="display: none;")
+        = flash[:error] if flash[:error]
+      - content_for :javascript do
+        = javascript_tag("$('.error').show();") if flash[:error]
+
+      = yield
+
+    = content_for :javascript do
+      :javascript
+        $(function() {
+          if(#{not flash[:notice].nil?}) {
+            setTimeout("window.hide_notice()", 10000);
+          }
+          if(#{not flash[:error].nil?}) {
+            setTimeout("window.hide_error()", 20000);
+          }
+        });
+
+    = yield :javascript

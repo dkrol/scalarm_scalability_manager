@@ -12,5 +12,11 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require foundation
 //= require turbolinks
+//= require angular
 //= require_tree .
+
+window.App = angular.module('ScalarmScalabilityManager', ['ngResource'])
+
+$(function(){ $(document).foundation(); });
