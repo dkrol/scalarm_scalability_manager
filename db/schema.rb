@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130913135758) do
+ActiveRecord::Schema.define(version: 20130918143410) do
 
   create_table "scalarm_managers", force: true do |t|
     t.string   "url"
@@ -29,6 +29,8 @@ ActiveRecord::Schema.define(version: 20130913135758) do
     t.boolean  "ignored"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "user"
+    t.text     "password_hashed"
   end
 
 end

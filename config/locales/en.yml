@@ -27,5 +27,9 @@ en:
       header: "Worker nodes"
       url: "URL:"
       created_at: "Created at:"
+      user: "User:"
+      password: "Password:"
+      deregister: "Deregister"
+      synchronize: "Load from the Information Manager"
     managers:
       header: "Managers"

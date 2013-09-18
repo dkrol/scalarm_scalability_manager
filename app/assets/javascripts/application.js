@@ -17,6 +17,8 @@
 //= require angular
 //= require_tree .
 
-window.App = angular.module('ScalarmScalabilityManager', ['ngResource'])
+$(function() {
+    window.App = angular.module('ScalarmScalabilityManager', []);
 
-$(function(){ $(document).foundation(); });
+    $(document).foundation();
+});

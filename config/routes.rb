@@ -4,6 +4,8 @@ ScalarmScalabilityManager::Application.routes.draw do
   get 'platform' => 'platform#index'
   get 'platform/index'
   post 'platform/synchronize'
+  post 'platform/addWorkerNode'
+  post 'platform/removeWorkerNode'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

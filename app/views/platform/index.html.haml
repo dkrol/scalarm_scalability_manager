@@ -10,8 +10,40 @@
         = t('platform.worker_nodes.url')
         {{ node.url }}
         \---
-        = t('platform.worker_nodes.created_at')
-        {{ node.created_at }}
+        = t('platform.worker_nodes.user')
+        {{ node.user }}
+        \---
+        %span.button.small(ng-click="removeWorkerNode(node.id)")
+          = t('platform.worker_nodes.deregister')
+
+    %hr
+      = form_tag('', {'ng-submit' => 'addWorkerNode()'}) do
+        .row
+          .small-2.columns
+            %label
+              = t('platform.worker_nodes.url')
+          .small-5.columns
+            %input.medium(type="text" ng-model="newNodeUrl")
+          .small-5.columns
+        .row
+          .small-2.columns
+            %label
+              = t('platform.worker_nodes.user')
+          .small-5.columns
+            %input.medium(type="text" ng-model="newNodeUser" )
+          .small-5.columns
+        .row
+          .small-2.columns
+            %label
+              = t('platform.worker_nodes.password')
+          .small-5.columns
+            %input.medium(type="password" ng-model="newNodePassword")
+          .small-5.columns
+        .row
+          .small-4.small-offset-2.columns
+            %input.button(type="submit")
+
+
 
   %section.panel.radius(ng-repeat="(manager_type, manager_list) in managers")
     %h3
@@ -20,9 +52,7 @@
       %li(ng-repeat="manager in manager_list")
         = t('platform.worker_nodes.url')
         {{ manager.url }}
-        \---
-        = t('platform.worker_nodes.created_at')
-        {{ manager.created_at }}
 
   %article(style="text-align: center;")
-    = button_to 'Synchronize', platform_synchronize_path, class: 'button'
+    %button.button(ng-click="synchronize()")
+      = t('platform.worker_nodes.synchronize')

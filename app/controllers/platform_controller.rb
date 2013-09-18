@@ -4,9 +4,6 @@ class PlatformController < ApplicationController
   def index
     @worker_nodes = WorkerNode.all
     @managers = ScalarmManager.all.group_by(&:service_type)
-
-    Rails.logger.debug("Worker nodes: #{@worker_nodes}")
-    Rails.logger.debug("Managers: #{@managers}")
   end
 
   def synchronize
@@ -31,7 +28,21 @@ class PlatformController < ApplicationController
 
     end
 
-    redirect_to action: :index
+    render json: { worker_nodes: WorkerNode.all, managers: ScalarmManager.all.group_by(&:service_type) }
+  end
+
+  def addWorkerNode
+    worker_node = WorkerNode.new({url: params[:url], user: params[:user]})
+    worker_node.password = params[:password]
+    worker_node.save
+
+    render json: worker_node
+  end
+
+  def removeWorkerNode
+    WorkerNode.destroy_all({id: params[:worker_node_id]})
+
+    render json: { status: 'ok' }
   end
 
   protected

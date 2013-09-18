@@ -22,6 +22,12 @@ body {
     min-width: 1200px;
 }
 
+label {
+  line-height: 28px;
+  vertical-align: middle;
+  text-align: right;
+}
+
 select {
     color: #555 !important;
     font-family: 'Trebuchet MS', Verdana, Arial, Helvetica, sans-serif !important;
