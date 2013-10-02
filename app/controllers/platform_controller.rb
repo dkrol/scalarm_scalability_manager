@@ -1,3 +1,5 @@
+require 'net/ssh'
+
 class PlatformController < ApplicationController
   before_filter :load_information_manager
 
@@ -47,22 +49,18 @@ class PlatformController < ApplicationController
 
   def deployManager
     manager_type = params[:managerType]
-    worker_node_id = params[:worker_node_id]
+    worker_node = WorkerNode.find(params[:worker_node_id])
 
-    # deployment procedure
-    # 1. upload and start the code of the selected manager type at the specified worker node
-    # 2. update and restart load balance of the selected manager type
-    # 3. create new manager instance locally unless error in previous step
-    # 4. return the local manager instance as json object
+    manager = ScalarmManager.remote_installation(worker_node, manager_type, @config['experiment_manager_lb'])
 
-    raise 'not implemented'
+    render json: manager
   end
 
   protected
 
   def load_information_manager
-    config = YAML.load_file(File.join(Rails.root, 'config', 'scalarm.yml'))
-    Rails.logger.debug("Config: #{config}")
-    @information_manager = InformationManager.new(config)
+    @config = YAML.load_file(File.join(Rails.root, 'config', 'scalarm.yml'))
+    Rails.logger.debug("Config: #{@config}")
+    @information_manager = InformationManager.new(@config)
   end
 end

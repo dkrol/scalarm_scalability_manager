@@ -1,1 +1,6 @@
 information_manager_url: localhost:11300
+
+experiment_manager_lb:
+  url: '172.16.67.214'
+  user: 'root'
+  config_file: '/etc/nginx/sites-available/default'

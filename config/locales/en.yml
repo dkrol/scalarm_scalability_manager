@@ -34,3 +34,4 @@ en:
     managers:
       header: "Managers"
       deploy_at: "Deploy manager"
+      destroy: "Stop"

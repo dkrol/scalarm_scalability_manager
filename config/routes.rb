@@ -8,6 +8,8 @@ ScalarmScalabilityManager::Application.routes.draw do
   post 'platform/removeWorkerNode'
   post 'platform/deployManager'
 
+  delete 'scalarm_managers/:id' => 'scalarm_managers#destroy'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

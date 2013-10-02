@@ -6,6 +6,7 @@
   $scope.worker_nodes = JSON.parse($('#worker-nodes').html())
   $scope.managers = JSON.parse($('#managers').html())
   $scope.count = 0
+  $scope.errorMap = new Array()
 
   $scope.addWorkerNode = () =>
     $http({
@@ -63,16 +64,45 @@
 
   $scope.deployManager = (managerType, nodeToDeployAt) =>
     console.log "Manager type: #{managerType} --- Node to deploy at: #{nodeToDeployAt}"
+    if nodeToDeployAt == undefined
+      $scope.showError("deploy_#{managerType}", "You have to select node in order to deploy")
+      return
 
     $http({
       url: '/platform/deployManager',
       method: "POST",
       data: { 'worker_node_id': nodeToDeployAt.id, 'managerType': managerType}
     }).success((data, status, headers, config) =>
-      $scope.worker_nodes = data.worker_nodes
-      $scope.managers = data.managers
+#      $scope.worker_nodes = data.worker_nodes
+      $scope.managers[managerType].push(data)
     ).error((data, status, headers, config) =>
       console.log "Error"
       console.log status
       console.log data
     )
+
+  $scope.destroyManager = (manager) =>
+    console.log "Destroying manager:"
+    console.log manager
+
+    $http({
+      url: "/scalarm_managers/#{manager.id}",
+      method: "DELETE"
+    }).success((data, status, headers, config) =>
+#      $scope.worker_nodes = data.worker_nodes
+      for i in [0..$scope.managers[manager.service_type].length] by 1
+        if($scope.managers[manager.service_type][i].id == manager.id)
+          $scope.managers[manager.service_type].splice(i, 1)
+          break
+    ).error((data, status, headers, config) =>
+      console.log "Error"
+      console.log status
+      console.log data
+    )
+
+  $scope.showError = (key, message) =>
+    $scope.errorMap[key] = message
+    setTimeout (=> console.log "Deleting element from array";  $scope.errorMap[key] = ""; console.log $scope.errorMap[key]), 10000
+
+  $scope.hasError = (key) =>
+    $scope.errorMap[key]

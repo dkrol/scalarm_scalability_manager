@@ -52,7 +52,14 @@
       %li(ng-repeat="manager in manager_list")
         = t('platform.worker_nodes.url')
         {{ manager.url }}
+        %button(ng-click="destroyManager(manager)")= t('platform.managers.destroy')
+
     %hr
+    .alert-box.radius.success(data-alert="" ng-show="false")
+      AAA
+    .alert-box.radius.alert(data-alert="" ng-show="hasError('deploy_' + manager_type)")
+      {{ errorMap['deploy_' + manager_type] }}
+      %a.close(href="#") &times;
     .row
       .small-4.columns(style="padding: 7px;")
         %select(ng-model="nodeToDeploy" ng-options="node.url for node in worker_nodes" )
