@@ -18,36 +18,11 @@ class ScalarmManager < ActiveRecord::Base
 
       # 2. update and restart load balancer of the selected manager type
       Rails.logger.debug("Deployment of '#{manager_type}' on '#{worker_node.url}' - step II")
-
       Net::SSH.start(em_lb_config['url'], em_lb_config['user']) do |ssh|
         lb_config = ssh.exec!("cat #{em_lb_config['config_file']}")
 
-        if worker_node.url == em_lb_config['url']
-          Rails.logger.debug("Bad option")
+        lb_config = scalarm_service.update_load_balancer_config(worker_node, em_lb_config['url'], lb_config)
 
-          unless lb_config.include?('/tmp/scalarm_experiment_manager.sock')
-            em_address = <<-EOD
-upstream scalarm_experiment_manager {
-      server unix:/tmp/scalarm_experiment_manager.sock;
-            EOD
-            lb_config.gsub!('upstream scalarm_experiment_manager {', em_address)
-          end
-        else
-
-          Rails.logger.debug("Good option")
-          Rails.logger.debug("Do we have worker node already : #{lb_config.include?("#{worker_node.url}:3001")}")
-          Rails.logger.debug("Do we have url already : #{lb_config.include?('upstream scalarm_experiment_manager {')}")
-
-          unless lb_config.include?("#{worker_node.url}:3001")
-            em_address = <<-EOD
-upstream scalarm_experiment_manager {
-      server #{worker_node.url}:3001;
-            EOD
-            lb_config.gsub!('upstream scalarm_experiment_manager {', em_address)
-          end
-        end
-
-        Rails.logger.debug(lb_config)
         ssh.exec!("echo '#{lb_config}' > #{em_lb_config['config_file']}")
         ssh.exec!('service nginx restart')
       end
@@ -55,9 +30,9 @@ upstream scalarm_experiment_manager {
       # 3. create new manager instance locally unless error in previous step
       Rails.logger.debug("Deployment of '#{manager_type}' on '#{worker_node.url}' - step III")
       manager_url = if worker_node.url != em_lb_config['url']
-                      "#{worker_node.url}:3001"
+                      "#{worker_node.url}:#{scalarm_service.service_port}"
                     else
-                      "#{worker_node.url}:/tmp/scalarm_experiment_manager.sock"
+                      "#{worker_node.url}:#{scalarm_service.service_socket}"
                     end
       manager = ScalarmManager.new(url: manager_url, service_type: manager_type)
       manager.worker_node = worker_node

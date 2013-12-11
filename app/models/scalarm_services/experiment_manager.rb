@@ -1,8 +1,11 @@
 class ExperimentManager
+  attr_reader :service_port, :service_socket
 
   def initialize(repo_url, service_folder)
     @service_repo = repo_url
     @service_folder = service_folder
+    @service_port = 3001
+    @service_socket = '/tmp/scalarm_experiment_manager.sock'
   end
 
   def remote_installation_commands(worker_node)
@@ -48,9 +51,9 @@ threads 1,16
     Rails.logger.debug("Worker node url: #{worker_node.url} --- #{scalarm_config['experiment_manager_lb']['url']}")
 
     config + if worker_node.url != scalarm_config['experiment_manager_lb']['url']
-               "bind 'tcp://0.0.0.0:3001'"
+               "bind 'tcp://0.0.0.0:#{@service_port}'"
              else
-               "bind 'unix:///tmp/scalarm_experiment_manager.sock'"
+               "bind 'unix://#{@service_socket}'"
             end
   end
 
@@ -62,6 +65,29 @@ threads 1,16
         'bundle exec rake db_router:stop',
         'bundle exec rake service:stop'
     ].join(';')
+  end
+
+  def update_load_balancer_config(worker_node, load_balancer_host_address, load_balancer_config)
+    if worker_node.url == load_balancer_host_address
+      unless load_balancer_config.include?('/tmp/scalarm_experiment_manager.sock')
+        em_address = <<-EOD
+      upstream scalarm_experiment_manager {
+            server unix:/tmp/scalarm_experiment_manager.sock;
+        EOD
+        load_balancer_config.gsub!('upstream scalarm_experiment_manager {', em_address)
+      end
+
+    else
+      unless load_balancer_config.include?("#{worker_node.url}:3001")
+        em_address = <<-EOD
+      upstream scalarm_experiment_manager {
+            server #{worker_node.url}:3001;
+        EOD
+        load_balancer_config.gsub!('upstream scalarm_experiment_manager {', em_address)
+      end
+    end
+
+    load_balancer_config
   end
 
 end

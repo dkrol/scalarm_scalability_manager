@@ -90,16 +90,20 @@
     console.log "Destroying manager:"
     console.log manager
 
+    $scope['loading_' + manager.service_type] = true
+
     $http({
       url: "/scalarm_managers/#{manager.id}",
       method: "DELETE"
     }).success((data, status, headers, config) =>
+      $scope['loading_' + manager.service_type] = false
 #      $scope.worker_nodes = data.worker_nodes
       for i in [0..$scope.managers[manager.service_type].length] by 1
         if($scope.managers[manager.service_type][i].id == manager.id)
           $scope.managers[manager.service_type].splice(i, 1)
           break
     ).error((data, status, headers, config) =>
+      $scope['loading_' + manager.service_type] = false
       console.log "Error"
       console.log status
       console.log data
