@@ -70,6 +70,15 @@ upstream scalarm_experiment_manager {
 
   end
 
+  def stop
+    Rails.logger.debug("Stopping Scalarm service #{service_type} at #{worker_node.url}")
+    scalarm_service = ScalarmServiceFactory.create_service(service_type)
+
+    Net::SSH.start(worker_node.url, worker_node.user, password: worker_node.password) do |ssh|
+      Rails.logger.debug(ssh.exec!(scalarm_service.stop_service))
+    end
+  end
+
   def self.label_to_name(manager_label)
     manager_label_map = {
         'Experiment Manager' => 'scalarm_experiment_manager'

@@ -53,4 +53,15 @@ threads 1,16
                "bind 'unix:///tmp/scalarm_experiment_manager.sock'"
             end
   end
+
+  def stop_service
+    [
+        'source .rvm/environments/default',
+        'ruby --version',
+        "cd #{@service_folder}",
+        'bundle exec rake db_router:stop',
+        'bundle exec rake service:stop'
+    ].join(';')
+  end
+
 end
