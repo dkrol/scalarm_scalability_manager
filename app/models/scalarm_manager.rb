@@ -20,6 +20,8 @@ class ScalarmManager < ActiveRecord::Base
       Rails.logger.debug("Deployment of '#{manager_type}' on '#{worker_node.url}' - step II")
 
       Net::SSH.start(em_lb_config['url'], em_lb_config['user']) do |ssh|
+        lb_config = ssh.exec!("cat #{em_lb_config['config_file']}")
+
         if worker_node.url == em_lb_config['url']
           Rails.logger.debug("Bad option")
 
