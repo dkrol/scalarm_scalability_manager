@@ -1,27 +1,25 @@
+require 'scalarm_services/service_factory'
+
 class ScalarmManager < ActiveRecord::Base
   belongs_to :worker_node
 
-  include ExperimentManager
-
-
   def self.remote_installation(worker_node, manager_type)
     em_lb_config = Rails.configuration.scalarm['experiment_manager_lb']
+
+    scalarm_service = ScalarmServiceFactory.create_service(manager_type)
 
     begin
       Rails.logger.debug("Deployment of '#{manager_type}' on '#{worker_node.url}' - step I")
       Net::SSH.start(worker_node.url, worker_node.user, password: worker_node.password) do |ssh|
         # deployment procedure
         # 1. upload and start the code of the selected manager type at the specified worker node
-        Rails.logger.debug(ssh.exec!(remote_installation_commands(worker_node, label_to_name(manager_type))))
+        Rails.logger.debug(ssh.exec!(scalarm_service.remote_installation_commands(worker_node)))
       end
 
       # 2. update and restart load balancer of the selected manager type
       Rails.logger.debug("Deployment of '#{manager_type}' on '#{worker_node.url}' - step II")
 
       Net::SSH.start(em_lb_config['url'], em_lb_config['user']) do |ssh|
-        lb_config = ssh.exec!("cat #{em_lb_config['config_file']}")
-        Rails.logger.debug("Worker node URL: #{worker_node.url} --- #{em_lb_config['url']}")
-
         if worker_node.url == em_lb_config['url']
           Rails.logger.debug("Bad option")
 
@@ -48,7 +46,7 @@ upstream scalarm_experiment_manager {
         end
 
         Rails.logger.debug(lb_config)
-        ssh.exec!("echo \"#{lb_config}\" > #{em_lb_config['config_file']}")
+        ssh.exec!("echo '#{lb_config}' > #{em_lb_config['config_file']}")
         ssh.exec!('service nginx restart')
       end
 
@@ -72,43 +70,12 @@ upstream scalarm_experiment_manager {
 
   end
 
-  def self.remote_installation_commands(worker_node, manager_type)
-    [
-      "source .rvm/environments/default",
-      "ruby --version",
-      "rm -rf #{manager_type}",
-      "git clone https://github.com/Scalarm/#{manager_type}",
-      "cd #{manager_type}",
-      "echo \"#{scalarm_config_file(manager_type)}\" >> config/scalarm.yml",
-      "echo \"#{puma_config_file(worker_node, manager_type)}\" >> config/puma.rb",
-      "bundle install",
-      "bundle exec rake service:non_digested",
-      "bundle exec rake service:start"
-    ].join(';')
-  end
-
   def self.label_to_name(manager_label)
     manager_label_map = {
         'Experiment Manager' => 'scalarm_experiment_manager'
     }
 
     manager_label_map[manager_label]
-  end
-
-  def self.scalarm_config_file(manager_type)
-    scalarm_config = Rails.configuration.scalarm
-
-    case manager_type
-      when 'scalarm_experiment_manager'
-        <<-END
-# at which port the service should listen
-information_service_url: #{scalarm_config['information_service']['url']}
-information_service_user: #{scalarm_config['information_service']['user']}
-information_service_pass: #{scalarm_config['information_service']['pass']}
-# mongo_activerecord config
-db_name: 'scalarm_db'
-        END
-    end
   end
 
   def self.thin_config_file(worker_node, manager_type, em_lb_config)
@@ -128,27 +95,5 @@ environment: production
                   end
     end
   end
-
-  def self.puma_config_file(worker_node, manager_type)
-    scalarm_config = Rails.configuration.scalarm
-
-    case manager_type
-      when 'scalarm_experiment_manager'
-        config = <<-END
-environment 'production'
-daemonize
-stdout_redirect 'log/puma.log', 'log/puma.log.err', true
-pidfile 'puma.pid'
-threads 1,16
-
-        END
-        config + if worker_node.url != scalarm_config['experiment_manager_lb']['url']
-                    "bind 'unix:///tmp/scalarm_experiment_manager.sock'"
-                  else
-                    "bind 'tcp://0.0.0.0:3000'"
-                  end
-    end
-  end
-
 
 end
