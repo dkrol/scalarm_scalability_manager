@@ -1,6 +1,7 @@
 %div(ng-controller="PlatformCtrl")
   #worker-nodes(style="display: none;")= @worker_nodes.to_json
   #managers(style="display: none;")= @managers.to_json
+  #manager_labels(style="display: none;")= @information_service.scalarm_services.to_json
 
   %section.panel.radius
     %h3
@@ -47,7 +48,7 @@
 
   %section.panel.radius(ng-repeat="(manager_type, manager_list) in managers")
     %h3
-      {{ manager_type }}
+      {{ manager_labels[manager_type] }}
     %ul.no-bullet
       %li(ng-repeat="manager in manager_list")
         = t('platform.worker_nodes.url')
@@ -67,6 +68,8 @@
         %button(ng-click="deployManager(manager_type, nodeToDeploy)")
           = t('platform.managers.deploy_at')
       .small-5.columns
+        .loading(ng-show="loading_{{ manager_type }}")
+          = image_tag('loading.gif')
 
 
   %article(style="text-align: center;")

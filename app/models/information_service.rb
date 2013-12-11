@@ -2,18 +2,18 @@ require 'openssl'
 require 'net/https'
 require 'json'
 
-class InformationManager
+class InformationService
   def initialize(config)
-    @service_url = config['information_manager_url']
+    @service_url = config['information_service']['url']
   end
 
   def scalarm_services
     {
-        'Experiment Manager' => 'experiments',
-        'Storage Manager - Log Bank' => 'storage',
-        'Storage Manager - DB Instance' => 'db_instances',
-        'Storage Manager - DB Config Service' => 'db_config_services',
-        'Storage Manager - DB Router' => 'db_routers'
+        'experiments' => 'Experiment Manager',
+        'storage' => 'Storage Manager - Log Bank',
+        'db_instances' => 'Storage Manager - DB Instance',
+        'db_config_services' => 'Storage Manager - DB Config Service',
+        'db_routers' => 'Storage Manager - DB Router'
     }
   end
 

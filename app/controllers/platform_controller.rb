@@ -5,15 +5,16 @@ class PlatformController < ApplicationController
 
   def index
     @worker_nodes = WorkerNode.all
-    @managers = ScalarmManager.all.group_by(&:service_type)
+
+    @managers = group_scalarm_services
   end
 
   def synchronize
     ScalarmManager.delete_all
     WorkerNode.delete_all
 
-    @information_manager.scalarm_services.each do |service_name, query_url|
-      @information_manager.get_list_of(query_url).each do |manager_url|
+    @information_service.scalarm_services.each do |service_name, service_label|
+      @information_service.get_list_of(service_name).each do |manager_url|
         node_address = manager_url.split(':').first
         node = WorkerNode.find_by_url(node_address)
         node = WorkerNode.new(url: node_address) if node.nil?
@@ -27,10 +28,9 @@ class PlatformController < ApplicationController
         node.save
         manager.save
       end
-
     end
 
-    render json: { worker_nodes: WorkerNode.all, managers: ScalarmManager.all.group_by(&:service_type) }
+    render json: { worker_nodes: WorkerNode.all, managers: group_scalarm_services }
   end
 
   def addWorkerNode
@@ -51,7 +51,7 @@ class PlatformController < ApplicationController
     manager_type = params[:managerType]
     worker_node = WorkerNode.find(params[:worker_node_id])
 
-    manager = ScalarmManager.remote_installation(worker_node, manager_type, @config['experiment_manager_lb'])
+    manager = ScalarmManager.remote_installation(worker_node, manager_type)
 
     render json: manager
   end
@@ -60,7 +60,18 @@ class PlatformController < ApplicationController
 
   def load_information_manager
     @config = YAML.load_file(File.join(Rails.root, 'config', 'scalarm.yml'))
-    Rails.logger.debug("Config: #{@config}")
-    @information_manager = InformationManager.new(@config)
+    @information_service = InformationService.new(@config)
+  end
+
+  def group_scalarm_services
+    managers = {}
+    
+    @information_service.scalarm_services.each do |service_name, service_label|
+      managers[service_name] = ScalarmManager.where(service_type: service_name).to_a
+    end
+    
+    Rails.logger.debug("Managers: #{managers}")
+
+    managers
   end
 end

@@ -5,6 +5,7 @@
 @PlatformCtrl = ($scope, $http) ->
   $scope.worker_nodes = JSON.parse($('#worker-nodes').html())
   $scope.managers = JSON.parse($('#managers').html())
+  $scope.manager_labels = JSON.parse($('#manager_labels').html())
   $scope.count = 0
   $scope.errorMap = new Array()
 
@@ -68,6 +69,8 @@
       $scope.showError("deploy_#{managerType}", "You have to select node in order to deploy")
       return
 
+    $scope['loading_' + managerType] = true
+
     $http({
       url: '/platform/deployManager',
       method: "POST",
@@ -75,10 +78,12 @@
     }).success((data, status, headers, config) =>
 #      $scope.worker_nodes = data.worker_nodes
       $scope.managers[managerType].push(data)
+      $scope['loading_' + managerType] = false
     ).error((data, status, headers, config) =>
       console.log "Error"
       console.log status
       console.log data
+      $scope['loading_' + managerType] = false
     )
 
   $scope.destroyManager = (manager) =>
