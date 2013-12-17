@@ -4,37 +4,24 @@ class ScalarmManager < ActiveRecord::Base
   belongs_to :worker_node
 
   def self.remote_installation(worker_node, manager_type)
-    em_lb_config = Rails.configuration.scalarm['experiment_manager_lb']
-
     scalarm_service = ScalarmServiceFactory.create_service(manager_type)
+    Rails.logger.debug("Scalarm service: #{scalarm_service}")
 
     begin
-      Rails.logger.debug("Deployment of '#{manager_type}' on '#{worker_node.url}' - step I")
+      Rails.logger.debug("Deployment of '#{manager_type}' on '#{worker_node.url}' - session[:]tep I")
       Net::SSH.start(worker_node.url, worker_node.user, password: worker_node.password) do |ssh|
         # deployment procedure
         # 1. upload and start the code of the selected manager type at the specified worker node
-        Rails.logger.debug(ssh.exec!(scalarm_service.remote_installation_commands(worker_node)))
+        scalarm_service.remote_installation_commands(worker_node, ssh)
       end
 
       # 2. update and restart load balancer of the selected manager type
       Rails.logger.debug("Deployment of '#{manager_type}' on '#{worker_node.url}' - step II")
-      Net::SSH.start(em_lb_config['url'], em_lb_config['user']) do |ssh|
-        lb_config = ssh.exec!("cat #{em_lb_config['config_file']}")
-
-        lb_config = scalarm_service.update_load_balancer_config(worker_node, em_lb_config['url'], lb_config)
-
-        ssh.exec!("echo '#{lb_config}' > #{em_lb_config['config_file']}")
-        ssh.exec!('service nginx restart')
-      end
+      scalarm_service.adjust_load_balancer_config(worker_node)
 
       # 3. create new manager instance locally unless error in previous step
       Rails.logger.debug("Deployment of '#{manager_type}' on '#{worker_node.url}' - step III")
-      manager_url = if worker_node.url != em_lb_config['url']
-                      "#{worker_node.url}:#{scalarm_service.service_port}"
-                    else
-                      "#{worker_node.url}:#{scalarm_service.service_socket}"
-                    end
-      manager = ScalarmManager.new(url: manager_url, service_type: manager_type)
+      manager = ScalarmManager.new(url: scalarm_service.manager_url(worker_node), service_type: manager_type)
       manager.worker_node = worker_node
       manager.save
 

@@ -8,8 +8,8 @@ class ExperimentManager
     @service_socket = '/tmp/scalarm_experiment_manager.sock'
   end
 
-  def remote_installation_commands(worker_node)
-    [
+  def remote_installation_commands(worker_node, ssh_connection)
+    cmd = [
       "source .rvm/environments/default",
       "ruby --version",
       "rm -rf #{@service_folder}",
@@ -21,6 +21,8 @@ class ExperimentManager
       "bundle exec rake db_router:start service:non_digested",
       "bundle exec rake service:start",
     ].join(';')
+
+    Rails.logger.debug(ssh_connection.exec!(cmd))
   end
 
   def scalarm_config_file
@@ -67,6 +69,19 @@ threads 1,16
     ].join(';')
   end
 
+  def adjust_load_balancer_config(worker_node)
+    em_lb_config = Rails.configuration.scalarm['experiment_manager_lb']
+
+    Net::SSH.start(em_lb_config['url'], em_lb_config['user']) do |ssh|
+      lb_config = ssh.exec!("cat #{em_lb_config['config_file']}")
+
+      lb_config = update_load_balancer_config(worker_node, em_lb_config['url'], lb_config)
+
+      ssh.exec!("echo '#{lb_config}' > #{em_lb_config['config_file']}")
+      ssh.exec!('service nginx restart')
+    end
+  end
+
   def update_load_balancer_config(worker_node, load_balancer_host_address, load_balancer_config)
     if worker_node.url == load_balancer_host_address
       unless load_balancer_config.include?('/tmp/scalarm_experiment_manager.sock')
@@ -88,6 +103,16 @@ threads 1,16
     end
 
     load_balancer_config
+  end
+
+  def manager_url(worker_node)
+    em_lb_config = Rails.configuration.scalarm['experiment_manager_lb']
+
+    if worker_node.url != em_lb_config['url']
+      "#{worker_node.url}:#{@service_port}"
+    else
+      "#{worker_node.url}:#{@service_socket}"
+    end
   end
 
 end
