@@ -14,9 +14,9 @@ header, footer, section, aside, nav, article {
 
 body {
     line-height: 1;
-    background: #3384BB url(image_path('bg01.jpg')) repeat;
+    background: #3384BB url(image_path('bg01.jpg')) repeat !important;
     color: #555;
-    font-family: 'Trebuchet MS', Verdana, Arial, Helvetica, sans-serif;
+//    font-family: 'Trebuchet MS', Verdana, Arial, Helvetica, sans-serif;
     font-size: 14px;
     line-height: 1.2em;
     min-width: 1200px;
@@ -30,7 +30,7 @@ label {
 
 select {
     color: #555 !important;
-    font-family: 'Trebuchet MS', Verdana, Arial, Helvetica, sans-serif !important;
+//    font-family: 'Trebuchet MS', Verdana, Arial, Helvetica, sans-serif !important;
     font-size: 22px !important;
     line-height: 1.2em !important;
 }
@@ -857,6 +857,6 @@ article#experiment_stats {
 }
 
 #site_title {
-    /*line-height: 70px;*/
+    line-height: 70px;
     padding-top: 0px;
 }

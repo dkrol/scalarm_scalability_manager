@@ -7,11 +7,11 @@
     %tite
       - content_for?(:title) ? yield(:title) : 'Scalarm Scalability Manager'
 
-    = stylesheet_link_tag 'https://fonts.googleapis.com/css?family=Ubuntu'
     = stylesheet_link_tag 'application'
+    = stylesheet_link_tag 'foundation.min'
     = csrf_meta_tags
-    = javascript_include_tag 'vendor/custom.modernizr'
     = javascript_include_tag 'application'
+    = javascript_include_tag 'foundation.min'
   %body
     = render 'layouts/navbar'
 

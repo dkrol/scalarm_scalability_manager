@@ -8,14 +8,16 @@
       = t('platform.worker_nodes.header')
     %ul.no-bullet
       %li(ng-repeat="node in worker_nodes")
-        = t('platform.worker_nodes.url')
-        {{ node.url }}
-        \---
-        = t('platform.worker_nodes.user')
-        {{ node.user }}
-        \---
-        %span.button.small(ng-click="removeWorkerNode(node.id)")
-          = t('platform.worker_nodes.deregister')
+        .row
+          .large-5.columns
+            = t('platform.worker_nodes.url')
+            {{ node.url }}
+          .large-5.columns
+            = t('platform.worker_nodes.user')
+            {{ node.user }}
+          .large-2.columns
+            %span.button.radius.small(ng-click="removeWorkerNode(node.id)")
+              = t('platform.worker_nodes.deregister')
 
     %hr
       = form_tag('', {'ng-submit' => 'addWorkerNode()'}) do

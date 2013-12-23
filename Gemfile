@@ -34,7 +34,6 @@ gem 'coffee-rails', '~> 4.0.0'
 gem 'jquery-rails'
 gem 'angularjs-rails'
 gem 'haml'
-gem 'zurb-foundation'
 gem 'highcharts-rails'
 gem 'jit-rails'
 
