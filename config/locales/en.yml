@@ -25,10 +25,10 @@ en:
   platform:
     worker_nodes:
       header: "Worker nodes"
-      url: "Address:"
+      url: "Address"
       created_at: "Created at:"
-      user: "User:"
-      password: "Password:"
+      user: "User"
+      password: "Password"
       deregister: "Deregister"
       synchronize: "Synchronize with Scalarm Information Service"
     managers:

@@ -1,12 +1,8 @@
 require 'net/ssh'
 
 class PlatformController < ApplicationController
-  before_filter :load_information_manager
 
   def index
-    @worker_nodes = WorkerNode.all
-
-    @managers = group_scalarm_services
   end
 
   def synchronize
@@ -69,9 +65,7 @@ class PlatformController < ApplicationController
     @information_service.scalarm_services.each do |service_name, service_label|
       managers[service_name] = ScalarmManager.where(service_type: service_name).to_a
     end
-    
-    Rails.logger.debug("Managers: #{managers}")
-
+    #Rails.logger.debug("Managers: #{managers}")
     managers
   end
 end

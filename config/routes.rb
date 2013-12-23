@@ -10,6 +10,10 @@ ScalarmScalabilityManager::Application.routes.draw do
 
   delete 'scalarm_managers/:id' => 'scalarm_managers#destroy'
 
+  get 'scalarm_managers/worker_nodes'
+  get 'scalarm_managers/managers'
+  get 'scalarm_managers/manager_labels'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

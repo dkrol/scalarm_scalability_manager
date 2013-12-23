@@ -1,23 +1,19 @@
 %div(ng-controller="PlatformCtrl")
-  #worker-nodes(style="display: none;")= @worker_nodes.to_json
-  #managers(style="display: none;")= @managers.to_json
-  #manager_labels(style="display: none;")= @information_service.scalarm_services.to_json
 
   %section.panel.radius
     %h3
       = t('platform.worker_nodes.header')
-    %ul.no-bullet
-      %li(ng-repeat="node in worker_nodes")
-        .row
-          .large-5.columns
-            = t('platform.worker_nodes.url')
-            {{ node.url }}
-          .large-5.columns
-            = t('platform.worker_nodes.user')
-            {{ node.user }}
-          .large-2.columns
-            %span.button.radius.small(ng-click="removeWorkerNode(node.id)")
-              = t('platform.worker_nodes.deregister')
+    %hr
+
+    .row
+      %ul.no-bullet
+        %li(ng-repeat="node in worker_nodes")
+          .row
+            .large-4.columns
+              {{ node.user }}@{{ node.url }}
+            .large-8.columns
+              %span.button.radius.tiny(ng-click="removeWorkerNode(node.id)")
+                = t('platform.worker_nodes.deregister')
 
     %hr
       = form_tag('', {'ng-submit' => 'addWorkerNode()'}) do
@@ -44,18 +40,19 @@
           .small-5.columns
         .row
           .small-4.small-offset-2.columns
-            %input.button(type="submit")
+            = submit_tag "Register", class: "button radius small"
 
 
 
   %section.panel.radius(ng-repeat="(manager_type, manager_list) in managers")
     %h3
       {{ manager_labels[manager_type] }}
+    %hr
     %ul.no-bullet
       %li(ng-repeat="manager in manager_list")
-        = t('platform.worker_nodes.url')
+        %b= t('platform.worker_nodes.url') + ':'
         {{ manager.url }}
-        %button(ng-click="destroyManager(manager)")= t('platform.managers.destroy')
+        %button.tiny.radius(ng-click="destroyManager(manager)")= t('platform.managers.destroy')
 
     %hr
     .alert-box.radius.success(data-alert="" ng-show="false")
@@ -64,10 +61,10 @@
       {{ errorMap['deploy_' + manager_type] }}
       %a.close(href="#") &times;
     .row
-      .small-4.columns(style="padding: 7px;")
+      .small-4.columns
         %select(ng-model="nodeToDeploy" ng-options="node.url for node in worker_nodes" )
       .small-3.columns
-        %button(ng-click="deployManager(manager_type, nodeToDeploy)")
+        %button.radius.small(ng-click="deployManager(manager_type, nodeToDeploy)")
           = t('platform.managers.deploy_at')
       .small-5.columns
         .loading(ng-show="loading_{{ manager_type }}")
@@ -75,5 +72,5 @@
 
 
   %article(style="text-align: center;")
-    %button.button(ng-click="synchronize()")
+    %button.button.radius(ng-click="synchronize()")
       = t('platform.worker_nodes.synchronize')

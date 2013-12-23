@@ -5,6 +5,8 @@ class ApplicationController < ActionController::Base
 
   prepend_before_filter :set_auth_token
 
+  before_filter :load_information_manager
+
   protected
 
   def set_auth_token
@@ -12,4 +14,10 @@ class ApplicationController < ActionController::Base
       params[:authenticity_token] = cookies['XSRF-TOKEN']
     end
   end
+
+  def load_information_manager
+    @config = YAML.load_file(File.join(Rails.root, 'config', 'scalarm.yml'))
+    @information_service = InformationService.new(@config)
+  end
+
 end

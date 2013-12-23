@@ -3,11 +3,29 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 @PlatformCtrl = ($scope, $http) ->
-  $scope.worker_nodes = JSON.parse($('#worker-nodes').html())
-  $scope.managers = JSON.parse($('#managers').html())
-  $scope.manager_labels = JSON.parse($('#manager_labels').html())
+  $scope.worker_nodes = []
+  $scope.managers = {}
+  $scope.manager_labels = {}
   $scope.count = 0
   $scope.errorMap = new Array()
+
+  $http.get('/scalarm_managers/worker_nodes').
+    success((data, status, headers, config) -> $scope.worker_nodes = data).
+    error((data, status, headers, config) ->
+#     TODO show error in communication message
+    )
+
+  $http.get('/scalarm_managers/managers').
+    success((data, status, headers, config) -> $scope.managers = data).
+    error((data, status, headers, config) ->
+#     TODO show error in communication message
+    )
+
+  $http.get('/scalarm_managers/manager_labels').
+    success((data, status, headers, config) -> $scope.manager_labels = data).
+    error((data, status, headers, config) ->
+#     TODO show error in communication message
+    )
 
   $scope.addWorkerNode = () =>
     $http({
