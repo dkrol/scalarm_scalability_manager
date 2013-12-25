@@ -44,12 +44,25 @@ class PlatformController < ApplicationController
   end
 
   def deployManager
-    manager_type = params[:managerType]
-    worker_node = WorkerNode.find(params[:worker_node_id])
+    params.require(:manager_type)
+    params.require(:worker_node_id)
 
-    manager = ScalarmManager.remote_installation(worker_node, manager_type)
+    manager_type = params[:manager_type]
+    begin
+      worker_node = WorkerNode.find(params[:worker_node_id])
 
-    render json: manager
+      manager = ScalarmManager.remote_installation(worker_node, manager_type)
+      if manager.nil?
+        render json: 'Response is nil', status: 500
+      else
+        render json: manager
+      end
+
+    rescue Exception => e
+      Rails.logger.error("An exception occured: #{e.message}")
+
+      render json: e.message, status: 500
+    end
   end
 
   protected

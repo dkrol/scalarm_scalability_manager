@@ -82,7 +82,9 @@
     )
 
   $scope.deployManager = (managerType, nodeToDeployAt) =>
-    console.log "Manager type: #{managerType} --- Node to deploy at: #{nodeToDeployAt}"
+    console.log "Manager type: #{managerType} --- Node to deploy at:"
+    console.log nodeToDeployAt
+
     if nodeToDeployAt == undefined
       $scope.showError("deploy_#{managerType}", "You have to select node in order to deploy")
       return
@@ -92,15 +94,14 @@
     $http({
       url: '/platform/deployManager',
       method: "POST",
-      data: { 'worker_node_id': nodeToDeployAt.id, 'managerType': managerType}
+      data: { 'worker_node_id': nodeToDeployAt.id, 'manager_type': managerType}
     }).success((data, status, headers, config) =>
-#      $scope.worker_nodes = data.worker_nodes
       $scope.managers[managerType].push(data)
+
       $scope['loading_' + managerType] = false
+
     ).error((data, status, headers, config) =>
-      console.log "Error"
-      console.log status
-      console.log data
+      $scope.showError("deploy_#{managerType}", "Status: #{status}, Reason: #{data}")
       $scope['loading_' + managerType] = false
     )
 

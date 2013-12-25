@@ -8,7 +8,7 @@ class ScalarmManager < ActiveRecord::Base
     Rails.logger.debug("Scalarm service: #{scalarm_service}")
 
     begin
-      Rails.logger.debug("Deployment of '#{manager_type}' on '#{worker_node.url}' - session[:]tep I")
+      Rails.logger.debug("Deployment of '#{manager_type}' on '#{worker_node.url}' - step I")
       Net::SSH.start(worker_node.url, worker_node.user, password: worker_node.password) do |ssh|
         # deployment procedure
         # 1. upload and start the code of the selected manager type at the specified worker node
