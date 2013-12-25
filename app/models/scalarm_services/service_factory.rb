@@ -24,7 +24,8 @@ class ScalarmServiceFactory
     {
         'experiments' => 'https://github.com/Scalarm/scalarm_experiment_manager',
         'db_instances' => 'https://github.com/Scalarm/scalarm_storage_manager',
-        'db_routers' => 'https://github.com/Scalarm/scalarm_storage_manager'
+        'db_routers' => 'https://github.com/Scalarm/scalarm_storage_manager',
+        'db_config_services' => 'https://github.com/Scalarm/scalarm_storage_manager'
     }
   end
 end
