@@ -16,7 +16,7 @@
     %a.close(href="#") &times;
   .row
     .small-4.columns
-      %select(ng-model="nodeToDeploy" ng-options="node.url for node in worker_nodes" )
+      %select(ng-model="nodeToDeploy" ng-options="node.user + '@' + node.url for node in worker_nodes" )
     .small-6.columns
       %button.radius.small(ng-click="deployManager(manager_type, nodeToDeploy)")
         = t('platform.managers.deploy_at')

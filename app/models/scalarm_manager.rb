@@ -9,7 +9,10 @@ class ScalarmManager < ActiveRecord::Base
 
     begin
       Rails.logger.debug("Deployment of '#{manager_type}' on '#{worker_node.url}' - step I")
-      Net::SSH.start(worker_node.url, worker_node.user, password: worker_node.password) do |ssh|
+      options = {}
+      options[:password] = worker_node.password unless worker_node.password.nil?
+
+      Net::SSH.start(worker_node.url, worker_node.user, options) do |ssh|
         # deployment procedure
         # 1. upload and start the code of the selected manager type at the specified worker node
         scalarm_service.remote_installation_commands(worker_node, ssh)
@@ -28,7 +31,7 @@ class ScalarmManager < ActiveRecord::Base
   #    # 4. return the local manager instance as json object
       manager
     rescue Exception => e
-      Rails.logger.error("An Exception occured during manager deployment: #{e}")
+      Rails.logger.error("An Exception occured during manager deployment: #{e.message}")
       nil
     end
 

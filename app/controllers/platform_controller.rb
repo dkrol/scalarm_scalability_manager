@@ -31,7 +31,7 @@ class PlatformController < ApplicationController
 
   def addWorkerNode
     worker_node = WorkerNode.new({url: params[:url], user: params[:user]})
-    worker_node.password = params[:password]
+    worker_node.password = params[:password] if params[:password]
     worker_node.save
 
     render json: worker_node
@@ -48,16 +48,22 @@ class PlatformController < ApplicationController
     params.require(:worker_node_id)
 
     manager_type = params[:manager_type]
+
+    is_allowed = (manager_type == 'db_config_services') ? @information_service.get_list_of('db_instances').empty? : true
+
     begin
-      worker_node = WorkerNode.find(params[:worker_node_id])
+      if is_allowed
+        worker_node = WorkerNode.find(params[:worker_node_id])
 
-      manager = ScalarmManager.remote_installation(worker_node, manager_type)
-      if manager.nil?
-        render json: 'Response is nil', status: 500
+        manager = ScalarmManager.remote_installation(worker_node, manager_type)
+        if manager.nil?
+          render json: 'Response is nil', status: 500
+        else
+          render json: manager
+        end
       else
-        render json: manager
+        render json: 'Cannot add new config servers when db instances are running', status: 403
       end
-
     rescue Exception => e
       Rails.logger.error("An exception occured: #{e.message}")
 

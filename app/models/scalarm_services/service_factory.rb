@@ -1,6 +1,7 @@
 require_relative 'experiment_manager'
 require_relative 'db_instance_manager'
 require_relative 'db_router_manager'
+require_relative 'db_config_service_manager'
 
 class ScalarmServiceFactory
 
@@ -11,6 +12,8 @@ class ScalarmServiceFactory
       DbInstanceManager.new(service_repos[type], service_repos[type].split('/').last)
     elsif type == 'db_routers'
       DbRouterManager.new(service_repos[type], service_repos[type].split('/').last)
+    elsif type == 'db_config_services'
+      DbConfigServiceManager.new(service_repos[type], service_repos[type].split('/').last)
     else
       nil
     end
