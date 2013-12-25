@@ -35,6 +35,7 @@ gem 'jquery-rails'
 gem 'angularjs-rails'
 gem 'haml'
 gem 'highcharts-rails'
+gem 'foundation-rails'
 gem 'jit-rails'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks

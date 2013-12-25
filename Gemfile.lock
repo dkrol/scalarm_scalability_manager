@@ -44,6 +44,9 @@ GEM
     erubis (2.7.0)
     eventmachine (1.0.3)
     execjs (2.0.2)
+    foundation-rails (5.0.2.0)
+      railties (>= 3.1.0)
+      sass (>= 3.2.0)
     haml (4.0.4)
       tilt
     highcharts-rails (3.0.7)
@@ -141,6 +144,7 @@ DEPENDENCIES
   bson_ext
   coffee-rails (~> 4.0.0)
   encryptor
+  foundation-rails
   haml
   highcharts-rails
   jbuilder (~> 1.2)

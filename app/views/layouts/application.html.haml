@@ -1,24 +1,22 @@
 %html(ng-app)
   %head
     %meta(charset="utf-8")
-    -#Set the viewport width to device width for mobile
     %meta(name="viewport" content="width=device-width, initial-scale=1.0")
 
     %tite
-      - content_for?(:title) ? yield(:title) : 'Scalarm Scalability Manager'
+      = content_for?(:title) ? yield(:title) : 'Scalarm Scalability Manager'
 
     = stylesheet_link_tag 'application'
-    = stylesheet_link_tag 'foundation.min'
+    = javascript_include_tag 'vendor/modernizr'
     = csrf_meta_tags
     = javascript_include_tag 'application'
-    = javascript_include_tag 'foundation.min'
   %body
     = render 'layouts/navbar'
 
     #wrapper
       %header
         %h1#site_title
-          = t('title')
+          = content_for?(:title) ? yield(:title) : t('title')
 
         = link_to image_tag('cyfronet_logo.png', style: 'float: right;'), 'http://www.cyfronet.pl'
         = link_to image_tag('eda_logo.png'), 'http://www.eda.europa.eu'

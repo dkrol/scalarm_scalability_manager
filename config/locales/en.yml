@@ -35,3 +35,4 @@ en:
       header: "Services"
       deploy_at: "Deploy manager"
       destroy: "Stop"
+  register_key_title: "Register"
