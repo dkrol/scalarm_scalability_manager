@@ -33,6 +33,7 @@ gem 'coffee-rails', '~> 4.0.0'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 gem 'angularjs-rails'
+gem 'angular_rails_csrf'
 gem 'haml'
 gem 'highcharts-rails'
 gem 'foundation-rails'

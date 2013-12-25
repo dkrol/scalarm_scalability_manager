@@ -19,7 +19,7 @@ class ScalarmManagersController < ApplicationController
   def worker_nodes
     worker_nodes = WorkerNode.all.map do |wn|
       wn.user = '<NA>' if wn.user.nil?
-      { url: wn.url, user: wn.user }
+      { url: wn.url, user: wn.user, id: wn.id }
     end
 
     render json: worker_nodes
