@@ -5,10 +5,10 @@ margin: 0;
 padding: 0;
 }
 /* render html5 elements as block */
-header, footer, section, aside, nav, article {
-    display: block;
-    margin-top: 0px;
-}
+//header, footer, section, aside, nav, article {
+//    display: block;
+//    margin-top: 0px;
+//}
 
 //body {
 //    line-height: 1;
@@ -53,7 +53,7 @@ header, footer, section, aside, nav, article {
 
 #wrapper {
   position: relative;
-  width: 960px;
+  max-width: 960px;
   background: url(image_path('bg03.jpg')) repeat;
   margin: 5px auto;
   min-height: 535px;
@@ -157,13 +157,13 @@ footer {
 
 /* header */
 
-header h1 {
-font-size: 36px;
-padding-top: 20px;
-margin-left: 10px;
-float: left;
-width: 600px;
-}
+//header h1 {
+//font-size: 36px;
+//padding-top: 20px;
+//margin-left: 10px;
+//float: left;
+//max-width: 600px;
+//}
 
 //header h1 a {
 //font-weight: bold;
@@ -852,7 +852,7 @@ width: 600px;
 //    padding:7px;
 //}
 
-#site_title {
-    line-height: 70px;
-    padding-top: 0px;
-}
+//#site_title {
+//    line-height: 70px;
+//    padding-top: 0px;
+//}

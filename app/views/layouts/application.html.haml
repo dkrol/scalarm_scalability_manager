@@ -4,7 +4,7 @@
     %meta(name="viewport" content="width=device-width, initial-scale=1.0")
 
     %tite
-      = content_for?(:title) ? yield(:title) : 'Scalarm Scalability Manager'
+      = content_for?(:title) ? yield(:title) : t('title')
 
     = stylesheet_link_tag 'application'
     = javascript_include_tag 'vendor/modernizr'
@@ -15,11 +15,14 @@
 
     #wrapper
       %header
-        %h1#site_title
-          = content_for?(:title) ? yield(:title) : t('title')
-
-        = link_to image_tag('cyfronet_logo.png', style: 'float: right;'), 'http://www.cyfronet.pl'
-        = link_to image_tag('eda_logo.png'), 'http://www.eda.europa.eu'
+        .row
+          .large-8.columns
+            %h1
+              = content_for?(:title) ? yield(:title) : t('title')
+          .large-2.columns
+            = link_to image_tag('cyfronet_logo.png'), 'http://www.cyfronet.pl'
+          .large-2.columns
+            = link_to image_tag('eda_logo.png'), 'http://www.eda.europa.eu'
       .clearall
 
       .notice.alert-box.radius.success(style="display: none;")
