@@ -1,0 +1,25 @@
+%section.panel.radius(ng-repeat="(manager_type, manager_list) in managers")
+  %h3
+    {{ manager_labels[manager_type] }}
+  %hr
+  %ul.no-bullet
+    %li(ng-repeat="manager in manager_list")
+      %b= t('platform.worker_nodes.url') + ':'
+      {{ manager.url }}
+      %button.tiny.radius(ng-click="destroyManager(manager)")= t('platform.managers.destroy')
+
+  %hr
+  .alert-box.radius.success(data-alert="" ng-show="false")
+    AAA
+  .alert-box.radius.alert(data-alert="" ng-show="hasError('deploy_' + manager_type)")
+    {{ errorMap['deploy_' + manager_type] }}
+    %a.close(href="#") &times;
+  .row
+    .small-4.columns
+      %select(ng-model="nodeToDeploy" ng-options="node.url for node in worker_nodes" )
+    .small-6.columns
+      %button.radius.small(ng-click="deployManager(manager_type, nodeToDeploy)")
+        = t('platform.managers.deploy_at')
+    .small-2.columns
+      .loading(ng-show="loading_{{ manager_type }}")
+        = image_tag('loading.gif')

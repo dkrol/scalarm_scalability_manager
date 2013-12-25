@@ -1,0 +1,25 @@
+= form_tag('', {'ng-submit' => 'addWorkerNode()'}) do
+  .row
+    .small-2.columns
+      %label
+        = t('platform.worker_nodes.url')
+    .small-5.columns
+      %input.medium(type="text" ng-model="newNodeUrl")
+    .small-5.columns
+  .row
+    .small-2.columns
+      %label
+        = t('platform.worker_nodes.user')
+    .small-5.columns
+      %input.medium(type="text" ng-model="newNodeUser" )
+    .small-5.columns
+  .row
+    .small-2.columns
+      %label
+        = t('platform.worker_nodes.password')
+    .small-5.columns
+      %input.medium(type="password" ng-model="newNodePassword")
+    .small-5.columns
+  .row
+    .small-4.small-offset-2.columns
+      = submit_tag t('register_key_title'), class: 'button radius small'
