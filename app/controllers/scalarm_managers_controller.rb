@@ -36,6 +36,10 @@ class ScalarmManagersController < ApplicationController
     render json: managers
   end
 
+  def simulation_managers
+    render json: ScalarmManager.where(service_type: 'simulation_manager').to_a
+  end
+
   def manager_labels
     render json: @information_service.scalarm_services.to_json
   end

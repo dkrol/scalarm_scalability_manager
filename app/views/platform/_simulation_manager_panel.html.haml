@@ -1,0 +1,46 @@
+%section.panel.radius(ng-controller='SimulationManagerCtrl')
+  %h3
+    Simulation Manager
+  %hr
+  %ul.no-bullet
+    %li(ng-repeat="manager in managers")
+      %b= t('platform.worker_nodes.url') + ':'
+      {{ manager.url }}
+      %button.tiny.radius(ng-click="destroy(manager)")= t('platform.managers.destroy')
+
+  %hr
+  .alert-box.radius.success(data-alert="" ng-show="has_message")
+    {{ message }}
+  .alert-box.radius.alert(data-alert="" ng-show="has_error_message")
+    {{ error_message }}
+    %a.close(href="#") &times;
+  .row
+    .small-2.columns
+      %label.right(for="experiment_id") Experiment id:
+    .small-4.columns
+      %input(type="text" ng-model="experiment_id" id="experiment_id")
+    .small-4.columns
+
+  .row
+    .small-2.columns
+      %label.right(for="login") Scalarm user:
+    .small-4.columns
+      %input(type="text" ng-model="login" id="login")
+    .small-4.columns
+
+  .row
+    .small-2.columns
+      %label.right(for="password") Password:
+    .small-4.columns
+      %input(type="password" ng-model="password" id="password")
+    .small-4.columns
+
+  .row
+    .small-4.columns
+      %select(ng-model="destination_node" ng-options="node.user + '@' + node.url for node in worker_nodes" )
+    .small-6.columns
+      %button.radius.small(ng-click="deploy()")
+        = t('platform.managers.deploy_at')
+    .small-2.columns
+      .loading(ng-show="loading_simulation_manager")
+        = image_tag('loading.gif')

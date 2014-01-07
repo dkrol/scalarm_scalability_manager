@@ -71,6 +71,29 @@ class PlatformController < ApplicationController
     end
   end
 
+  require 'scalarm_services/service_factory'
+
+  def deploy_simulation_manager
+    #%w(:worker_node_id, :experiment_id, :login, :password).each{|param| params.require param.to_sym }
+
+    worker_node = WorkerNode.find(params[:worker_node_id])
+    service = ScalarmServiceFactory.create_service('simulation_manager')
+    begin
+      manager = service.deploy_manager(worker_node, params[:experiment_id], params[:login], params[:password])
+
+        if manager.nil?
+          render json: 'Response is nil', status: 500
+        else
+          render json: manager
+        end
+    rescue Exception => e
+      Rails.logger.error("An exception occured: #{e.message}")
+
+      render json: e.message, status: 500
+    end
+  end
+
+
   protected
 
   def load_information_manager

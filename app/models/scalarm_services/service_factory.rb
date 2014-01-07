@@ -2,6 +2,7 @@ require_relative 'experiment_manager'
 require_relative 'db_instance_manager'
 require_relative 'db_router_manager'
 require_relative 'db_config_service_manager'
+require_relative 'simulation_manager'
 
 class ScalarmServiceFactory
 
@@ -14,6 +15,8 @@ class ScalarmServiceFactory
       DbRouterManager.new(service_repos[type], service_repos[type].split('/').last)
     elsif type == 'db_config_services'
       DbConfigServiceManager.new(service_repos[type], service_repos[type].split('/').last)
+    elsif type == 'simulation_manager'
+      SimulationManager.new(service_repos[type], 'scalarm_simulation_manager')
     else
       nil
     end
@@ -25,7 +28,8 @@ class ScalarmServiceFactory
         'experiments' => 'https://github.com/Scalarm/scalarm_experiment_manager',
         'db_instances' => 'https://github.com/Scalarm/scalarm_storage_manager',
         'db_routers' => 'https://github.com/Scalarm/scalarm_storage_manager',
-        'db_config_services' => 'https://github.com/Scalarm/scalarm_storage_manager'
+        'db_config_services' => 'https://github.com/Scalarm/scalarm_storage_manager',
+        'simulation_manager' => 'https://github.com/Scalarm/scalarm_experiment_manager'
     }
   end
 end
