@@ -1,0 +1,58 @@
+- @metrics.each do |metric_name, host_measurement_list|
+  %section.panel.radius
+    %h3= metric_label(metric_name)
+    %hr
+    %h5.subheader
+      = "Monitoring period #{@monitoring_period_start} - #{@monitoring_period_end}"
+    %h5.subheader
+      = "Time resolution #{time_resolution_label(@time_resolution)}"
+    .container{id: metric_name}
+
+  = content_for :javascript do
+    :javascript
+      $(document).ready(function() {
+        Highcharts.setOptions({
+          global: {
+            useUTC: false
+          }
+        });
+
+        $(".container##{metric_name}").highcharts({
+          chart: {
+            type: 'spline',
+            animation: Highcharts.svg, // don't animate in old IE
+            marginRight: 10,
+          },
+          title: {
+              text: "#{metric_label(metric_name)}"
+          },
+          xAxis: {
+              type: 'datetime',
+              tickPixelInterval: 150
+          },
+          yAxis: {
+              title: {
+                  text: 'Value'
+              },
+              plotLines: [{
+                  value: 0,
+                  width: 1,
+                  color: '#808080'
+              }]
+          },
+          tooltip: {
+              formatter: function() {
+                      return '<b>'+ this.series.name +'</b><br/>'+
+                      Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
+                      Highcharts.numberFormat(this.y, 2);
+              }
+          },
+          legend: {
+              enabled: false
+          },
+          exporting: {
+              enabled: false
+          },
+          series: #{host_measurement_list.to_json}
+        });
+      });

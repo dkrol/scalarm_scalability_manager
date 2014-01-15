@@ -1,0 +1,53 @@
+= form_tag(monitoring_show_path) do
+  %section.panel.radius
+    %h3= "Monitoring options"
+    %hr
+    .row
+      .large-2.columns
+        %label.right(for="monitoring_period_start")= "Start date:"
+      .large-3.columns
+        = text_field_tag :monitoring_period_start, Time.now.strftime("%Y-%m-%d")
+      .large-1.columns
+        %label.right(for="monitoring_period_start_time")= "Hour:"
+      .large-2.columns
+        = select_tag :monitoring_period_start_time, options_for_select(hour_options), class: 'small'
+      .large-1.columns
+
+    .row
+      .large-2.columns
+        %label.right(for="monitoring_period_end")= "End date:"
+      .large-3.columns
+        = text_field_tag :monitoring_period_end, (Time.now + 1.day).strftime("%Y-%m-%d")
+      .large-1.columns
+        %label.right(for="monitoring_period_end_time")= "Hour:"
+      .large-2.columns
+        = select_tag :monitoring_period_end_time, options_for_select(hour_options), class: 'small'
+      .large-1.columns
+
+    .row
+      .large-2.columns
+        %label.right(for="time_resolution")= "Time resolution:"
+      .large-3.columns
+        = select_tag :time_resolution, options_for_select(time_resolution_options)
+      .large-1.columns
+
+  %section.panel.radius
+    %h3= "Monitored hosts"
+    %hr
+
+    - @monitored_hosts.each do |host, metric_list|
+      %h4= host.gsub('_', '.')
+      %ul
+        - metric_list.each do |metric|
+          %li
+            = metric_label(metric)
+            = check_box_tag("metric_#{host}.#{metric}", 1, false)
+
+  %section(style="text-align: center;")
+    = submit_tag "Submit", class: 'button radius'
+
+= content_for :javascript do
+  :javascript
+    $(function() {
+
+    });

@@ -1,4 +1,6 @@
 ScalarmScalabilityManager::Application.routes.draw do
+  get "monitoring/index"
+  get "monitoring/show"
   root 'platform#index'
 
   get 'platform' => 'platform#index'
@@ -15,6 +17,11 @@ ScalarmScalabilityManager::Application.routes.draw do
   get 'scalarm_managers/managers'
   get 'scalarm_managers/manager_labels'
   get 'scalarm_managers/simulation_managers'
+
+  get 'monitoring' => 'monitoring#index'
+  get 'monitoring/index'
+  post 'monitoring/show'
+  get 'monitoring/show'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
