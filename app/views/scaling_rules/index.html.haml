@@ -1,0 +1,50 @@
+%section.panel.radius
+  %h3= t('scaling_rules.defined_header')
+  %hr
+
+  - if @scaling_rules.empty?
+    %p
+      =t('scaling_rules.zero_defined')
+  - else
+    = render :partial => "scaling_rule", :collection => @scaling_rules
+
+%section.panel.radius
+  %h3= t('scaling_rules.create_header')
+  %hr
+
+  = form_for @scaling_rule, :url => scaling_rules_path do |f|
+    .row
+      .large-3.columns
+        %label.right(for="metric")= t('monitoring.metric')
+      .large-4.columns
+        = text_field_tag :metric
+      .large-1.columns
+
+    .row
+      .large-3.columns
+        %label.right(for="measurement_type")= t('monitoring.measurement_type')
+      .large-2.columns
+        = f.select :measurement_type, options_for_select(measurement_type_options)
+      .large-1.columns
+
+    .row
+      .large-3.columns
+        %label.right(for="condition")= t('monitoring.condition')
+      .large-2.columns
+        = f.select :condition, options_for_select(ScalingRule.conditions)
+      .large-1.columns
+
+    .row
+      .large-3.columns
+        %label.right(for="threshold")= t('monitoring.threshold')
+      .large-2.columns
+        = f.text_field :threshold
+      .large-1.columns
+
+    .row
+      .large-3.columns
+        %label.right(for="action")= t('monitoring.action')
+      .large-5.columns
+        = f.select :action, options_for_select(action_options)
+      .large-1.columns
+
