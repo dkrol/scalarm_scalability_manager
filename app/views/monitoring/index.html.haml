@@ -40,7 +40,7 @@
       %ul
         - metric_list.each do |metric|
           %li
-            = metric_label(metric)
+            = metric_name_label(metric)
             = check_box_tag("metric_#{host}.#{metric}", 1, false)
 
   %section(style="text-align: center;")

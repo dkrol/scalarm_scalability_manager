@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130918143410) do
+ActiveRecord::Schema.define(version: 20140115152212) do
 
   create_table "scalarm_managers", force: true do |t|
     t.string   "url"
@@ -20,6 +20,24 @@ ActiveRecord::Schema.define(version: 20130918143410) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "scaling_rules", force: true do |t|
+    t.string   "metric"
+    t.string   "measurement_type"
+    t.string   "condition"
+    t.string   "threshold"
+    t.string   "action"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "time_windows", force: true do |t|
+    t.integer "length"
+    t.string  "length_unit"
+    t.integer "scaling_rule_id"
+  end
+
+  add_index "time_windows", ["scaling_rule_id"], name: "index_time_windows_on_scaling_rule_id"
 
   create_table "worker_nodes", force: true do |t|
     t.string   "url"

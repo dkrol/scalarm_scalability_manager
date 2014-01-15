@@ -1,4 +1,6 @@
 class ScalingRule < ActiveRecord::Base
+  has_one :time_window, dependent: :destroy
+
   #def as_string
   #  string_form = "if #{self.metric_name.split(".").last} on #{self.metric_name.split(".").first}" +
   #  " is #{self.condition} #{self.threshold}"
@@ -22,8 +24,27 @@ class ScalingRule < ActiveRecord::Base
   #  end
   #end
 
+  def get_metric
+    Metric.create_from_full_name(metric)
+  end
+
   def self.conditions
     %w(> < = <= >=)
+  end
+
+  def condition_label
+    case condition
+      when '>'
+        'greater than'
+      when '<'
+        'less then'
+      when '='
+        'equal to'
+      when '<='
+        'less then or equal to'
+      when '>='
+        'greater then or equal to'
+    end
   end
 
 

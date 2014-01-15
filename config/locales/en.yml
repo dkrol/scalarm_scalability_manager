@@ -36,3 +36,14 @@ en:
       deploy_at: "Deploy manager"
       destroy: "Stop"
   register_key_title: "Register"
+  monitoring:
+    condition: "Condition:"
+    measurement_type: "Measurement type:"
+    metric: "Metric:"
+    threshold: "Threshold:"
+    action: "Action:"
+  scaling_rules:
+    create_header: "Define a new scaling rule"
+    defined_header: "Defined scaling rules"
+    zero_defined: "There is no scaling rules defined"
+    time_window_length: "Time window length:"

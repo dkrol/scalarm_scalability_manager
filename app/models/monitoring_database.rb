@@ -41,4 +41,21 @@ class MonitoringDatabase
     { 'date' => date_filter }
   end
 
+  def get_metrics
+    metrics = []
+
+    @db.collection_names.each do |collection_name|
+      if collection_name =~ MONITORING_TABLE_PATTERN
+        metric = Metric.new
+        host, attribute = collection_name.split('.')
+        metric.host = host
+        metric.attribute = attribute
+
+        metrics << metric
+      end
+    end
+
+    metrics
+  end
+
 end

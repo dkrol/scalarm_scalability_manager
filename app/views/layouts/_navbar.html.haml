@@ -1,16 +1,14 @@
-- unless @current_user.nil?
-  .fixed
-    %nav.top-bar
-      %section.top-bar-section
-        -#%ul.left
-        -#  %li
-        -#    = link_to t('navbar.experiments_link'), experiments_path
-        -#  %li
-        -#    = link_to t('navbar.simulations_link'), simulations_path
-        -#
-        -#%ul.right
-        -#  %li
-        -#    = link_to content_tag(:span, t('navbar.account_link'), 'data-tooltip' => '', class: 'has-tip tip-bottom',
-        -#      title: "You are log in as '#{@current_user.login}'"), user_controller_account_path
-        -#  %li
-        -#    = link_to t('navbar.logout_link'), logout_path, method: :post
+-#- unless @current_user.nil?
+.fixed
+  %nav.top-bar
+    %section.top-bar-section
+      %ul.left
+        %li
+          = link_to "Platform management", platform_path
+        %li.divider
+        %li
+          = link_to "Monitoring", monitoring_path
+        %li.divider
+        %li
+          = link_to "Scaling rules", scaling_rules_path
+        %li.divider

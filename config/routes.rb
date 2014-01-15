@@ -1,4 +1,7 @@
 ScalarmScalabilityManager::Application.routes.draw do
+  get "scaling_rules/index"
+  get "scaling_rules/create"
+  get "scaling_rules/destroy"
   get "monitoring/index"
   get "monitoring/show"
   root 'platform#index'
@@ -23,6 +26,12 @@ ScalarmScalabilityManager::Application.routes.draw do
   post 'monitoring/show'
   get 'monitoring/show'
 
+
+  get 'scaling_rules' => 'scaling_rules#index'
+  get 'scaling_rules/index'
+  get 'scaling_rules/:id' => 'scaling_rules#show'
+  post 'scaling_rules' => 'scaling_rules#create'
+  delete 'scaling_rules' => 'scaling_rules#destroy'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

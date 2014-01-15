@@ -6,45 +6,58 @@
     %p
       =t('scaling_rules.zero_defined')
   - else
-    = render :partial => "scaling_rule", :collection => @scaling_rules
+    = render :partial => :scaling_rule, :collection => @scaling_rules
 
-%section.panel.radius
+%section.panel.radius(ng-controller='ScalingRulesCtrl')
   %h3= t('scaling_rules.create_header')
   %hr
 
   = form_for @scaling_rule, :url => scaling_rules_path do |f|
     .row
       .large-3.columns
-        %label.right(for="metric")= t('monitoring.metric')
-      .large-4.columns
-        = text_field_tag :metric
+        = f.label(:metric, t('monitoring.metric'), class: 'right')
+      .large-6.columns
+        = f.select :metric, options_for_select(metric_options)
       .large-1.columns
 
     .row
       .large-3.columns
-        %label.right(for="measurement_type")= t('monitoring.measurement_type')
+        = f.label(:measurement_type, t('monitoring.measurement_type'), class: 'right')
       .large-2.columns
-        = f.select :measurement_type, options_for_select(measurement_type_options)
+        = f.select :measurement_type, options_for_select(measurement_type_options), { selected: 'simple' },
+          { 'ng-model' => 'measurement_type', 'ng-change' => 'measurement_type_listener()' }
+      .large-1.columns
+
+    .row(ng-show="show_time_window_specs")
+      .large-3.columns
+        = f.label(:time_window_length, t('scaling_rules.time_window_length'), class: 'right')
+      .large-2.columns
+        = text_field_tag :time_window_length
+      .large-2.columns
+        = select_tag :time_window_length_unit, options_for_select(time_window_length_units_options)
       .large-1.columns
 
     .row
       .large-3.columns
-        %label.right(for="condition")= t('monitoring.condition')
+        = f.label(:condition, t('monitoring.condition'), class: 'right')
       .large-2.columns
         = f.select :condition, options_for_select(ScalingRule.conditions)
       .large-1.columns
 
     .row
       .large-3.columns
-        %label.right(for="threshold")= t('monitoring.threshold')
+        = f.label(:threshold, t('monitoring.threshold'), class: 'right')
       .large-2.columns
         = f.text_field :threshold
       .large-1.columns
 
     .row
       .large-3.columns
-        %label.right(for="action")= t('monitoring.action')
-      .large-5.columns
+        = f.label(:action, t('monitoring.action'), class: 'right')
+      .large-6.columns
         = f.select :action, options_for_select(action_options)
       .large-1.columns
 
+    .row
+      .large-3.columns.large-centered
+        = submit_tag "Submit", class: 'button radius'
