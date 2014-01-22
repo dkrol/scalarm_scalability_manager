@@ -47,3 +47,5 @@ en:
     defined_header: "Defined scaling rules"
     zero_defined: "There is no scaling rules defined"
     time_window_length: "Time window length:"
+
+    category_header: "Scaling rule category:"

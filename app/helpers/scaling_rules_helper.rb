@@ -18,4 +18,8 @@ module ScalingRulesHelper
   def time_window_length_units_options
     [["Seconds", "s"], ["Minutes", "m"], ["Hours", "h"]]
   end
+
+  def scaling_rule_categories_options
+    [["Simple rule", "simple"], ["Time window rule", "time_window"], ["Trend discovery rule", "trend"]]
+  end
 end

@@ -20,6 +20,24 @@ class ScalingAction
     label
   end
 
+  def action_label
+    case action_type
+      when 'scale_up'
+        'Start a new instance'
+      when 'scale_down'
+        'Stop an instance'
+    end
+  end
+
+  def service_label
+    case scalarm_service
+      when 'experiment'
+        'Experiment Manager'
+      when 'storage'
+        'Storage Manager'
+    end
+  end
+
   def get_id
     "#{scalarm_service}|||#{action_type}"
   end

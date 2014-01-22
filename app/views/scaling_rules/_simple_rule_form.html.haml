@@ -1,0 +1,44 @@
+= form_for @scaling_rule, :url => scaling_rules_path do |f|
+  = hidden_field_tag 'rule_category', 'simple'
+  = hidden_field_tag 'measurement_type', 'simple'
+
+  .row
+    .large-3.columns
+      = f.label(:metric, t('monitoring.metric'), class: 'right')
+    .large-6.columns
+      = f.select :metric, options_for_select(metric_options)
+    .large-1.columns
+
+  .row
+    .large-3.columns
+      = f.label(:measurement_type, t('monitoring.measurement_type'), class: 'right')
+    .large-3.columns
+      = text_field_tag :measurement_type, 'Simple measurement', disabled: :disabled
+    .large-1.columns
+
+  .row
+    .large-3.columns
+      = f.label(:condition, t('monitoring.condition'), class: 'right')
+    .large-3.columns
+      = f.select :condition, options_for_select(ScalingRule.conditions)
+    .large-1.columns
+
+  .row
+    .large-3.columns
+      = f.label(:threshold, t('monitoring.threshold'), class: 'right')
+    .large-3.columns
+      = f.text_field :threshold
+    .large-4.columns(style="line-height: 37px; " )
+      in the metric specific unit
+    .large-1.columns
+
+  .row
+    .large-3.columns
+      = f.label(:action, t('monitoring.action'), class: 'right')
+    .large-6.columns
+      = f.select :action, options_for_select(action_options)
+    .large-1.columns
+
+  .row
+    .large-3.columns.large-centered
+      = submit_tag "Submit", class: 'button radius'

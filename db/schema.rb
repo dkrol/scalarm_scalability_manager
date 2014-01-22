@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140115152212) do
+ActiveRecord::Schema.define(version: 20140122125802) do
 
   create_table "scalarm_managers", force: true do |t|
     t.string   "url"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 20140115152212) do
     t.string   "action"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "rule_category"
   end
 
   create_table "time_windows", force: true do |t|

@@ -1,0 +1,53 @@
+= form_for @scaling_rule, :url => scaling_rules_path do |f|
+  = hidden_field_tag 'rule_category', 'trend'
+  = hidden_field_tag 'measurement_type', 'time_window'
+
+  .row
+    .large-3.columns
+      = f.label(:metric, t('monitoring.metric'), class: 'right')
+    .large-6.columns
+      = f.select :metric, options_for_select(metric_options)
+    .large-1.columns
+
+  .row
+    .large-3.columns
+      = f.label(:measurement_type, t('monitoring.measurement_type'), class: 'right')
+    .large-3.columns
+      = text_field_tag :measurement_type, 'Time window measurement', disabled: :disabled
+    .large-1.columns
+
+  .row
+    .large-3.columns
+      = f.label(:time_window_length, t('scaling_rules.time_window_length'), class: 'right')
+    .large-2.columns
+      = text_field_tag :time_window_length
+    .large-2.columns
+      = select_tag :time_window_length_unit, options_for_select(time_window_length_units_options)
+    .large-1.columns
+
+  .row
+    .large-3.columns
+      = f.label(:condition, t('monitoring.condition'), class: 'right')
+    .large-3.columns
+      = f.select :condition, options_for_select(ScalingRule.conditions)
+    .large-1.columns
+
+  .row
+    .large-3.columns
+      = f.label(:threshold, t('monitoring.threshold'), class: 'right')
+    .large-3.columns
+      = f.text_field :threshold
+    .large-4.columns(style="line-height: 37px; " )
+      [%]
+    .large-1.columns
+
+  .row
+    .large-3.columns
+      = f.label(:action, t('monitoring.action'), class: 'right')
+    .large-6.columns
+      = f.select :action, options_for_select(action_options)
+    .large-1.columns
+
+  .row
+    .large-3.columns.large-centered
+      = submit_tag "Submit", class: 'button radius'

@@ -10,6 +10,9 @@ class ScalingRulesController < ApplicationController
 
   def create
     scaling_rule = ScalingRule.new(scaling_rule_params)
+    scaling_rule.rule_category = params[:rule_category]
+    scaling_rule.measurement_type = params[:measurement_type]
+
     scaling_rule.time_window = if scaling_rule.measurement_type == 'time_window'
                                  tw = TimeWindow.new
                                  tw.length = params[:time_window_length].to_i
@@ -19,13 +22,18 @@ class ScalingRulesController < ApplicationController
                                else
                                  nil
                                end
-
     scaling_rule.save
 
     redirect_to scaling_rules_path
   end
 
   def destroy
+    scaling_rule = ScalingRule.find(params[:id])
+    scaling_rule.destroy
+
+    flash[:notice] = 'Selected scaling rule has been destroyed'
+
+    redirect_to scaling_rules_path
   end
 
   private

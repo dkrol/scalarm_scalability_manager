@@ -1,18 +1,26 @@
-.row
-  .large-12.columns
-    = scaling_rule.id
-    \: <b>If</b>&nbsp
-    = "'#{metric_name_label(scaling_rule.get_metric.attribute)}'"
-    &nbspon&nbsp
-    = "'#{host_label(scaling_rule.get_metric.host)}'"
-    &nbsp<b>is</b>&nbsp
-    = scaling_rule.condition_label
-    &nbsp
-    = scaling_rule.threshold
+- action = ScalingAction.create_from_id(scaling_rule.action)
+%tr
+  %td(style="text-align: center;")
+    = action.service_label
 
-    - unless scaling_rule.time_window.nil?
-      <b>in last</b>
-      = "#{scaling_rule.time_window.length} #{scaling_rule.time_window.length_unit}"
-    %br
-    &nbsp<b>then</b>&nbsp
-    = ScalingAction.create_from_id(scaling_rule.action).to_s
+  %td(style="text-align: center;")
+    = "'#{metric_name_label(scaling_rule.get_metric.attribute)}' on '#{host_label(scaling_rule.get_metric.host)}'"
+
+  %td(style="text-align: center;")
+    = scaling_rule.measurement_type
+    - if scaling_rule.measurement_type == 'time_window'
+      = "= #{scaling_rule.time_window.length} [#{scaling_rule.time_window.length_unit}]"
+
+  %td(style="text-align: center;")
+    = scaling_rule.condition
+
+  %td(style="text-align: center;")
+    = scaling_rule.threshold
+    - if scaling_rule.rule_category == 'trend'
+      = '[%]'
+
+  %td(style="text-align: center;")
+    = action.action_label
+
+  %td(style="text-align: center;")
+    = button_to("Delete", scaling_rules_path(id: scaling_rule.id), method: :delete, class: 'button radius tiny')
