@@ -73,16 +73,16 @@ class ScalingRule < ActiveRecord::Base
 
   def monitor
     while true
-      puts "[#{Time.now}][#{get_id}] scaling rule monitoring"
+      Rails.logger.debug("[#{Time.now}][#{get_id}] scaling rule monitoring")
       #TODO do not monitor if this is a cool down period
 
       measurements = get_measurements
       is_fulfilled = fulfilled?(measurements)
 
-      puts "[#{Time.now}][#{get_id}] is fulfilled - #{is_fulfilled}"
+      Rails.logger.debug("[#{Time.now}][#{get_id}] is fulfilled - #{is_fulfilled}")
 
       if is_fulfilled
-        puts "[#{Time.now}][#{get_id}] executing scaling action - #{action}"
+        Rails.logger.debug("[#{Time.now}][#{get_id}] executing scaling action - #{action}")
         # TODO perform the scaling action
         # TODO create a cool down period
       end
@@ -92,7 +92,63 @@ class ScalingRule < ActiveRecord::Base
   end
 
   def get_id
-    "#{metric}-#{measurement_type}-#{condition}-#{threshold}-#{action}".gsub('|', '-')
+    "#{metric}-#{rule_category}-#{condition}-#{threshold}-#{action}".gsub('|', '-')
   end
+
+  def start_monitoring_process
+    pid_file_path = File.join(Rails.root, 'tmp', "#{get_id}.pid")
+
+    if File.exist?(pid_file_path)
+      Rails.logger.debug("[#{Time.now}][#{get_id}] a pid file already exists - hence we will not monitor this rule")
+    else
+      reader, writer = IO.pipe()
+
+      pid = fork do
+        writer.close
+
+        scaling_rule_id = reader.gets.to_i
+        rule = ScalingRule.find(scaling_rule_id)
+
+        rule.monitor
+      end
+
+      reader.close
+      writer.puts self.id
+
+      IO.write(pid_file_path, pid)
+
+      Process.detach(pid)
+
+      Rails.logger.debug("[#{Time.now}][#{get_id}] scaling rule monitoring process started")
+    end
+
+  end
+
+  def stop_monitoring_process
+    pid_file_path = File.join(Rails.root, 'tmp', "#{get_id}.pid")
+
+    if File.exist?(pid_file_path)
+      pid = IO.read(pid_file_path).to_i
+      Process.kill('TERM', pid)
+      File.delete(pid_file_path)
+      Rails.logger.debug("[#{Time.now}][#{get_id}] scaling rule monitoring process stopped")
+    else
+      Rails.logger.debug("[#{Time.now}][#{get_id}] there is no file with the monitoring pid process")
+    end
+
+  end
+
+  def self.global_monitoring_start
+    ScalingRule.all.each do |rule|
+      rule.start_monitoring_process
+    end
+  end
+
+  def self.global_monitoring_stop
+    ScalingRule.all.each do |rule|
+      rule.stop_monitoring_process
+    end
+  end
+
 
 end
