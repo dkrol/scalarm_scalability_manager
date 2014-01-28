@@ -1,6 +1,6 @@
 - @metrics.each do |metric_name, host_measurement_list|
   %section.panel.radius
-    %h3= metric_label(metric_name)
+    %h3= metric_name_label(metric_name)
     %hr
     %h5.subheader
       = "Monitoring period #{@monitoring_period_start} - #{@monitoring_period_end}"
@@ -24,7 +24,7 @@
             marginRight: 10,
           },
           title: {
-              text: "#{metric_label(metric_name)}"
+              text: "#{metric_name_label(metric_name)}"
           },
           xAxis: {
               type: 'datetime',

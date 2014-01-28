@@ -29,9 +29,14 @@ hr {
 //}
 
 label {
-  line-height: 30px;
+  line-height: 37px;
   vertical-align: middle;
 }
+
+form.right-aligned input {
+  text-align: right;
+}
+
 //
 //select {
 //    color: #555 !important;

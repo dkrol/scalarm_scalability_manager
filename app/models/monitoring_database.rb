@@ -2,6 +2,7 @@ require 'mongo'
 
 class MonitoringDatabase
   MONITORING_TABLE_PATTERN = /.*_.*_.*\..*___.*___.*/
+  attr_reader :db
 
   def initialize
     @config = YAML.load_file(File.join(Rails.root, 'config', 'scalarm.yml'))['monitoring']

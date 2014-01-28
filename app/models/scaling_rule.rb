@@ -1,3 +1,7 @@
+require 'scaling_rule_categories/simple_rule'
+require 'scaling_rule_categories/window_rule'
+require 'scaling_rule_categories/trend_rule'
+
 class ScalingRule < ActiveRecord::Base
   has_one :time_window, dependent: :destroy
 
@@ -29,7 +33,7 @@ class ScalingRule < ActiveRecord::Base
   end
 
   def self.conditions
-    %w(> < = <= >=)
+    %w(> < == <= >=)
   end
 
   def condition_label
@@ -38,7 +42,7 @@ class ScalingRule < ActiveRecord::Base
         'greater than'
       when '<'
         'less then'
-      when '='
+      when '=='
         'equal to'
       when '<='
         'less then or equal to'
@@ -47,5 +51,48 @@ class ScalingRule < ActiveRecord::Base
     end
   end
 
+  def get_measurements
+    get_rule_specifics.get_measurements(self, MonitoringDatabase.new().db)
+  end
+
+  def fulfilled?(measurements)
+    get_rule_specifics.fulfilled?(measurements, self, MonitoringDatabase.new().db)
+  end
+
+  def get_rule_specifics
+    if rule_category == 'simple'
+      SimpleRule.new
+    elsif rule_category == 'time_window'
+      WindowRule.new
+    elsif rule_category == 'trend'
+      TrendRule.new
+    else
+      nil
+    end
+  end
+
+  def monitor
+    while true
+      puts "[#{Time.now}][#{get_id}] scaling rule monitoring"
+      #TODO do not monitor if this is a cool down period
+
+      measurements = get_measurements
+      is_fulfilled = fulfilled?(measurements)
+
+      puts "[#{Time.now}][#{get_id}] is fulfilled - #{is_fulfilled}"
+
+      if is_fulfilled
+        puts "[#{Time.now}][#{get_id}] executing scaling action - #{action}"
+        # TODO perform the scaling action
+        # TODO create a cool down period
+      end
+
+      sleep(30)
+    end
+  end
+
+  def get_id
+    "#{metric}-#{measurement_type}-#{condition}-#{threshold}-#{action}".gsub('|', '-')
+  end
 
 end
