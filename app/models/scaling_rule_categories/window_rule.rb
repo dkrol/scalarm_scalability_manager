@@ -1,18 +1,9 @@
 class WindowRule
 
   def get_measurements(rule, db)
-    collection_name = rule.get_metric.get_id
+    time_window_start = Time.now - rule.time_window.get_length.seconds
 
-    time_window_length = rule.time_window.length
-    if rule.time_window.length_unit == 'm'
-      time_window_length *= 60
-    elsif rule.time_window.length_unit == 'h'
-      time_window_length *= 3600
-    end
-
-    time_window_start = Time.now - time_window_length.seconds
-
-    db[collection_name].find({ date: { '$gt' => time_window_start } }).to_a
+    db.get_measurements(rule.get_metric, time_window_start)
   end
 
   def fulfilled?(measurements, rule, db)

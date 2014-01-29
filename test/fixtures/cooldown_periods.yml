@@ -1,0 +1,5 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  start_at: <%= Time.now - 1.minutes %>
+  end_at: <%= Time.now + 4.minutes %>

@@ -11,7 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140122125802) do
+ActiveRecord::Schema.define(version: 20140129082635) do
+
+  create_table "cooldown_periods", force: true do |t|
+    t.datetime "start_at"
+    t.datetime "end_at"
+  end
 
   create_table "scalarm_managers", force: true do |t|
     t.string   "url"

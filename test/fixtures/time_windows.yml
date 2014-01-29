@@ -1,9 +1,16 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+## Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  length: 1
-  length_unit: MyString
+seconds:
+  id: 1
+  length: 35
+  length_unit: 's'
 
-two:
-  length: 1
-  length_unit: MyString
+minutes:
+  id: 2
+  length: 80
+  length_unit: 'm'
+
+hours:
+  id: 3
+  length: 3
+  length_unit: 'h'

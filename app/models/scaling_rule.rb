@@ -4,6 +4,7 @@ require 'scaling_rule_categories/trend_rule'
 
 class ScalingRule < ActiveRecord::Base
   has_one :time_window, dependent: :destroy
+  attr_accessor :db
 
   #def as_string
   #  string_form = "if #{self.metric_name.split(".").last} on #{self.metric_name.split(".").first}" +
@@ -52,11 +53,11 @@ class ScalingRule < ActiveRecord::Base
   end
 
   def get_measurements
-    get_rule_specifics.get_measurements(self, MonitoringDatabase.new().db)
+    get_rule_specifics.get_measurements(self, @db || MonitoringDatabase.new)
   end
 
   def fulfilled?(measurements)
-    get_rule_specifics.fulfilled?(measurements, self, MonitoringDatabase.new().db)
+    get_rule_specifics.fulfilled?(measurements, self, @db ||  MonitoringDatabase.new)
   end
 
   def get_rule_specifics
@@ -72,19 +73,27 @@ class ScalingRule < ActiveRecord::Base
   end
 
   def monitor
+    cooldown_period_length = YAML::load_file(File.join(Rails.root, 'config', 'scalarm.yml'))['cooldown_period_length'].to_i
+
     while true
       Rails.logger.debug("[#{Time.now}][#{get_id}] scaling rule monitoring")
-      #TODO do not monitor if this is a cool down period
 
-      measurements = get_measurements
-      is_fulfilled = fulfilled?(measurements)
+      if CooldownPeriod.in_cooldown_period(Time.now)
+        Rails.logger.debug("[#{Time.now}][#{get_id}] There is an ongoing cooldown period")
+      else
+        measurements = get_measurements
+        is_fulfilled = fulfilled?(measurements)
 
-      Rails.logger.debug("[#{Time.now}][#{get_id}] is fulfilled - #{is_fulfilled}")
+        Rails.logger.debug("[#{Time.now}][#{get_id}] is fulfilled - #{is_fulfilled}")
 
-      if is_fulfilled
-        Rails.logger.debug("[#{Time.now}][#{get_id}] executing scaling action - #{action}")
-        # TODO perform the scaling action
-        # TODO create a cool down period
+        if is_fulfilled
+          Rails.logger.debug("[#{Time.now}][#{get_id}] executing scaling action - #{action}")
+
+          cooldown_period = CooldownPeriod.new(start_at: Time.now, end_at: Time.now + cooldown_period_length.minutes)
+          cooldown_period.save
+
+          # TODO perform the scaling action
+        end
       end
 
       sleep(30)

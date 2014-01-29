@@ -1,9 +1,7 @@
 class SimpleRule
 
   def get_measurements(rule, db)
-    collection_name = rule.get_metric.get_id
-
-    db[collection_name].find({}, { sort: ['_id', :desc], limit: 1 }).to_a
+    db.get_measurements(rule.get_metric, nil, nil, true)
   end
 
   def fulfilled?(measurements, rule, db)

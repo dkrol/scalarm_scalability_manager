@@ -28,6 +28,17 @@ class MonitoringDatabase
     metric_values
   end
 
+  def get_measurements(metric, after_date = nil, before_date = nil, find_one = false)
+    query_constraints = { date: {} }
+    query_constraints['date']['$gt'] = after_date unless after_date.nil?
+    query_constraints['date']['$lt'] = before_date unless before_date.nil?
+
+    result_constraints = { sort: ['_id', :desc] }
+    result_constraints['limit'] = 1 if find_one
+
+    @db[metric.get_id].find(query_constraints, result_constraints).to_a
+  end
+
   # somehow the hour in JS is one hour ahead
   def string_to_time(string_date)
     DateTime.strptime(string_date, "%Y-%m-%d %H:%M:%S").to_time

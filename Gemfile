@@ -63,3 +63,4 @@ gem 'thin'
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
+gem 'mocha', group: :test

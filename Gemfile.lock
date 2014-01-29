@@ -68,8 +68,11 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    metaclass (0.0.2)
     mime-types (1.25.1)
     minitest (4.7.5)
+    mocha (1.0.0)
+      metaclass (~> 0.0.1)
     mongo (1.9.2)
       bson (~> 1.9.2)
     multi_json (1.8.2)
@@ -153,6 +156,7 @@ DEPENDENCIES
   jbuilder (~> 1.2)
   jit-rails
   jquery-rails
+  mocha
   mongo
   net-scp
   net-ssh
