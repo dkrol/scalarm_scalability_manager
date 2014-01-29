@@ -6,7 +6,6 @@ with_storage:
   experiment_manager_compatible: true
   storage_manager_compatible: true
   simulation_manager_compatible: true
-  ignored: false
 
 with_experiments:
   id: 2

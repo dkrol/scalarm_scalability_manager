@@ -19,7 +19,9 @@ class WorkerNode < ActiveRecord::Base
 
     wn = nil
 
-    WorkerNode.where(ignored: false).each do |node|
+    WorkerNode.all.each do |node|
+      next if node.ignored.to_s == 'true'
+
       hosted_services = node.scalarm_managers.map(&:service_type)
       Rails.logger.debug("Hosted services at #{node.url} - #{hosted_services}")
 

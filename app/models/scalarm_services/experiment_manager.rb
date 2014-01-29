@@ -35,6 +35,16 @@ information_service_user: #{scalarm_config['information_service']['user']}
 information_service_pass: #{scalarm_config['information_service']['pass']}
 # mongo_activerecord config
 db_name: 'scalarm_db'
+# Monitoring section
+monitoring:
+  # table name within the server
+  db_name: scalarm_monitoring
+  interval: 30
+  # which metric should be monitored
+  # this is a list of names separeted with the ":" sign
+  # currently the following list is supported
+  metrics: cpu:memory
+  #:memory:experiment_manager
     END
   end
 
