@@ -50,5 +50,28 @@ class ScalingRuleTest < ActiveSupport::TestCase
     assert rule.fulfilled?(measurements) == false
   end
 
+  test "scaling experiment manager" do
+    wn = WorkerNode.find(1)
+    WorkerNode.expects(:find_node_without).with('experiment').returns(wn)
+    ScalarmManager.expects(:remote_installation).with(wn, 'experiments').returns(nil)
+
+    rule = ScalingRule.find(1)
+    manager = ScalingAction.create_from_id(rule.action).execute
+
+    assert_nil manager
+  end
+
+  test "scaling storage manager" do
+    wn = WorkerNode.find(2)
+    WorkerNode.expects(:find_node_without).with('storage').returns(wn)
+    ScalarmManager.expects(:remote_installation).with(wn, 'db_instances').returns(ScalarmManager.new)
+
+    rule = ScalingRule.find(4)
+    assert_not_nil rule
+    manager = ScalingAction.create_from_id(rule.action).execute
+
+    assert_not_nil manager
+  end
+
 
 end

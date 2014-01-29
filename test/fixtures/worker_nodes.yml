@@ -1,17 +1,25 @@
 ## Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
-#
-#one:
-#  url: MyString
-#  experiment_manager_compatible: false
-#  storage_manager_compatible: false
-#  simulation_manager_compatible: false
-#  ignored: false
-#  occupied_by:
-#
-#two:
-#  url: MyString
-#  experiment_manager_compatible: false
-#  storage_manager_compatible: false
-#  simulation_manager_compatible: false
-#  ignored: false
-#  occupied_by:
+
+with_storage:
+  id: 1
+  url: "172.16.67.1"
+  experiment_manager_compatible: true
+  storage_manager_compatible: true
+  simulation_manager_compatible: true
+  ignored: false
+
+with_experiments:
+  id: 2
+  url: "172.16.67.2"
+  experiment_manager_compatible: true
+  storage_manager_compatible: true
+  simulation_manager_compatible: true
+  ignored: false
+
+empty_but_ingored:
+  id: 3
+  url: "172.16.67.3"
+  experiment_manager_compatible: true
+  storage_manager_compatible: true
+  simulation_manager_compatible: true
+  ignored: true

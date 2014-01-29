@@ -27,6 +27,15 @@ window_rule_2:
   action: "experiment|||scale_up"
   rule_category: "time_window"
 
+window_rule_3:
+  id: 4
+  metric: "172_16_67_56.System___NULL___CPU"
+#  measurement_type: "window"
+  condition: ">"
+  threshold: "80"
+  action: "storage|||scale_up"
+  rule_category: "time_window"
+
 #
 #two:
 #  metric: MyString

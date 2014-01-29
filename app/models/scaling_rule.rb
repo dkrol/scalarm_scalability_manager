@@ -92,7 +92,8 @@ class ScalingRule < ActiveRecord::Base
           cooldown_period = CooldownPeriod.new(start_at: Time.now, end_at: Time.now + cooldown_period_length.minutes)
           cooldown_period.save
 
-          # TODO perform the scaling action
+          manager = ScalingAction.create_from_id(action).execute
+          Rails.logger.debug("Deployed manager: #{manager}")
         end
       end
 
@@ -158,6 +159,5 @@ class ScalingRule < ActiveRecord::Base
       rule.stop_monitoring_process
     end
   end
-
 
 end

@@ -1,9 +1,21 @@
-## Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
-#
-#one:
-#  url: MyString
-#  type:
-#
-#two:
-#  url: MyString
-#  type:
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+experiment_manager_1:
+  url: 172.16.67.1:3000
+  service_type: experiments
+  worker_node_id: 1
+
+db_instance_1:
+  url: 172.16.67.2:30000
+  service_type: db_instances
+  worker_node_id: 2
+
+db_config_service_1:
+  url: 172.16.67.1:28000
+  service_type: db_config_services
+  worker_node_id: 1
+
+db_config_service_2:
+  url: 172.16.67.2:28000
+  service_type: db_config_services
+  worker_node_id: 2
