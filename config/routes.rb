@@ -25,6 +25,7 @@ ScalarmScalabilityManager::Application.routes.draw do
   get 'monitoring/index'
   post 'monitoring/show'
   get 'monitoring/show'
+  get 'monitoring/monitoring_data'
 
 
   get 'scaling_rules' => 'scaling_rules#index'

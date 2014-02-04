@@ -1,3 +1,5 @@
+require 'json'
+
 class MonitoringController < ApplicationController
 
   before_filter :load_monitoring_db
@@ -16,22 +18,52 @@ class MonitoringController < ApplicationController
   def show
     parse_monitoring_options
 
-    date_constraints = {}
-    date_constraints['monitoring_period_start'] = @monitoring_period_start unless @monitoring_period_start.nil?
-    date_constraints['monitoring_period_end'] = @monitoring_period_end unless @monitoring_period_end.nil?
-
-    Rails.logger.debug("Date find conditions: #{date_constraints}")
+    @monitoring_period_start = Date.parse(@monitoring_period_start).to_time unless @monitoring_period_start.nil?
+    @monitoring_period_end   = Date.parse(@monitoring_period_end).to_time unless @monitoring_period_end.nil?
 
     @metrics.each do |metric_name, host_list|
       @metrics[metric_name] = host_list.map do |host|
-        Rails.logger.debug("Getting measurements for: #{host}.#{metric_name}")
-        measurements = @monitoring_db.measurements("#{host}.#{metric_name}", date_constraints)
+        metric = Metric.create_from_full_name("#{host}.#{metric_name}")
+        Rails.logger.debug("Getting measurements for: #{metric.get_id}")
+
+        measurements = @monitoring_db.get_measurements(metric, @monitoring_period_start, @monitoring_period_end).map do |x|
+          [ x['date'].to_i + 3600, x['value'].to_f ]
+        end
 
         { name: host_label(host), data: change_time_resolution_of(measurements) }
       end
     end
+  end
 
-    #Rails.logger.debug("Metrics and measurements: #{@metrics}")
+  def monitoring_data
+    @time_resolution = params[:time_resolution].to_i
+    @start_time = Time.at(params[:start_time].to_i)
+    @end_time = Time.at(params[:end_time].to_i)
+
+    Rails.logger.debug("Start: #{@start_time} - End: #{@end_time}")
+
+    metric_measurements = []
+
+    params[:hosts].each do |host|
+      full_metric_id = "#{host.gsub('.', '_')}.#{params[:metric]}"
+      metric = Metric.create_from_full_name(full_metric_id)
+
+      measurements = @monitoring_db.get_measurements(metric, @start_time, @end_time).map do |x|
+        [ x['date'].to_i, x['value'].to_f ]
+      end
+
+      #db = @monitoring_db.db
+      #measurements = db[full_metric_id].find({date: { '$gt' => @start_time }}).to_a.map{|doc|
+      #  [ doc['date'].to_i, doc['value'].to_f ]
+      #}
+
+      Rails.logger.debug("Measurements: #{measurements}")
+      metric_measurements << { name: host, data: measurements } unless measurements.empty?
+    end
+
+    Rails.logger.debug("Metric measurements: #{metric_measurements.inspect}")
+
+    render json: metric_measurements
   end
 
 
@@ -74,6 +106,8 @@ class MonitoringController < ApplicationController
   end
 
   def change_time_resolution_of(measurements)
+    return [] if measurements.empty?
+
     grouped_values, measurements_from_time_period = [], []
 
     last_measurement_date = measurements[0][0]

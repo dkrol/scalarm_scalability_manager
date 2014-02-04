@@ -22,19 +22,21 @@ class MonitoringDatabase
     field_filter = { :fields => { _id: 0, date: 1, value: 1 } }
 
     metric_values = @db[metric_name].find(date_filter(date_constraints), field_filter).to_a.sort_by{|a| a['date']}.map do |doc|
-      [ string_to_time(doc['date']).to_i, doc['value'].to_f ]
+      [ doc['date'].to_i, doc['value'].to_f ]
     end
 
     metric_values
   end
 
   def get_measurements(metric, after_date = nil, before_date = nil, find_one = false)
-    query_constraints = { date: {} }
-    query_constraints['date']['$gt'] = after_date unless after_date.nil?
-    query_constraints['date']['$lt'] = before_date unless before_date.nil?
+    query_constraints = { "date" => {} }
+    query_constraints["date"]["$gt"] = after_date unless after_date.nil?
+    query_constraints["date"]["$lt"] = before_date unless before_date.nil?
 
-    result_constraints = { sort: ['_id', :desc] }
+    result_constraints = { sort: ['_id', :asc] }
     result_constraints['limit'] = 1 if find_one
+    Rails.logger.debug("Query constraints: #{query_constraints.inspect}")
+    Rails.logger.debug("Result constraints: #{result_constraints.inspect}")
 
     @db[metric.get_id].find(query_constraints, result_constraints).to_a
   end

@@ -11,48 +11,10 @@
   = content_for :javascript do
     :javascript
       $(document).ready(function() {
-        Highcharts.setOptions({
-          global: {
-            useUTC: false
-          }
-        });
+        var chart = new window.MonitoringChart("#{metric_name}",
+                                               "#{@monitoring_period_start}",
+                                               "#{@monitoring_period_end}", "#{@time_resolution}");
 
-        $(".container##{metric_name}").highcharts({
-          chart: {
-            type: 'spline',
-            animation: Highcharts.svg, // don't animate in old IE
-            marginRight: 10,
-          },
-          title: {
-              text: "#{metric_name_label(metric_name)}"
-          },
-          xAxis: {
-              type: 'datetime',
-              tickPixelInterval: 150
-          },
-          yAxis: {
-              title: {
-                  text: 'Value'
-              },
-              plotLines: [{
-                  value: 0,
-                  width: 1,
-                  color: '#808080'
-              }]
-          },
-          tooltip: {
-              formatter: function() {
-                      return '<b>'+ this.series.name +'</b><br/>'+
-                      Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
-                      Highcharts.numberFormat(this.y, 2);
-              }
-          },
-          legend: {
-              enabled: false
-          },
-          exporting: {
-              enabled: false
-          },
-          series: #{host_measurement_list.to_json}
-        });
+        chart.createChart("#{metric_name_label(metric_name)}", #{host_measurement_list.to_json});
+        chart.startUpdating("#{monitoring_monitoring_data_path}", #{host_measurement_list.map{|x| x[:name]}.to_json});
       });
