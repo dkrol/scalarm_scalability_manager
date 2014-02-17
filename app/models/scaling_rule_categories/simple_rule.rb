@@ -5,6 +5,8 @@ class SimpleRule
   end
 
   def fulfilled?(measurements, rule, db)
+    return false if measurements.blank?
+
     measurement = measurements.first['value'].to_f
     condition = rule.condition
 

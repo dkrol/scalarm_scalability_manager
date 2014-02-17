@@ -32,9 +32,10 @@ class MonitoringDatabase
     query_constraints = { "date" => {} }
     query_constraints["date"]["$gt"] = after_date unless after_date.nil?
     query_constraints["date"]["$lt"] = before_date unless before_date.nil?
+    query_constraints = {} if query_constraints['date'].blank?
 
-    result_constraints = { sort: ['_id', :asc] }
-    result_constraints['limit'] = 1 if find_one
+    result_constraints = { sort: ['_id', :desc] }
+    result_constraints[:limit] = 1 if find_one
     Rails.logger.debug("Query constraints: #{query_constraints.inspect}")
     Rails.logger.debug("Result constraints: #{result_constraints.inspect}")
 
