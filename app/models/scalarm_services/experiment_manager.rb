@@ -9,20 +9,72 @@ class ExperimentManager
   end
 
   def remote_installation_commands(worker_node, ssh_connection)
-    cmd = [
-      "source .rvm/environments/default",
-      "ruby --version",
-      "rm -rf #{@service_folder}",
-      "git clone #{@service_repo}",
-      "cd #{@service_folder}",
-      "echo \"#{scalarm_config_file}\" > config/scalarm.yml",
-      "echo \"#{puma_config_file(worker_node)}\" > config/puma.rb",
-      "bundle install",
-      "bundle exec rake db_router:start service:non_digested",
-      "bundle exec rake service:start",
-    ].join(';')
+    Rails.logger.debug("Remove existing folder: #{remove_existing_folder_cmd}")
+    Rails.logger.debug(ssh_connection.exec!(remove_existing_folder_cmd))
 
-    Rails.logger.debug(ssh_connection.exec!(cmd))
+    Rails.logger.debug("Download code: #{download_code_cmd}")
+    Rails.logger.debug(ssh_connection.exec!(download_code_cmd))
+
+    Rails.logger.debug("Create configuration: #{create_configuration_cmd(worker_node)}")
+    Rails.logger.debug(ssh_connection.exec!(create_configuration_cmd(worker_node)))
+
+    Rails.logger.debug("install_dependencies_cmd: #{install_dependencies_cmd}")
+    Rails.logger.debug(ssh_connection.exec!(install_dependencies_cmd))
+
+    Rails.logger.debug("execution_prerequisite_cmd: #{execution_prerequisite_cmd}")
+    Rails.logger.debug(ssh_connection.exec!(execution_prerequisite_cmd))
+
+    Rails.logger.debug("start_service_cmd: #{start_service_cmd}")
+    Rails.logger.debug(ssh_connection.exec!(start_service_cmd))
+  end
+
+  def remove_existing_folder_cmd
+    [
+        'source .rvm/environments/default',
+        'ruby --version',
+        "rm -rf #{@service_folder}"
+    ].join(';')
+  end
+
+  def download_code_cmd
+    [
+        'source .rvm/environments/default',
+        "git clone #{@service_repo}"
+    ].join(';')
+  end
+
+  def create_configuration_cmd(worker_node)
+    [
+        'source .rvm/environments/default',
+        "cd #{@service_folder}",
+        "echo \"#{scalarm_config_file}\" > config/scalarm.yml",
+        "echo \"#{puma_config_file(worker_node)}\" > config/puma.rb",
+    ].join(';')
+  end
+
+  def install_dependencies_cmd
+    [
+        'source .rvm/environments/default',
+        "cd #{@service_folder}",
+        'bundle install'
+    ].join(';')
+  end
+
+  def execution_prerequisite_cmd
+    [
+        'source .rvm/environments/default',
+        "cd #{@service_folder}",
+        'bundle exec rake db_router:start',
+        'bundle exec rake service:non_digested',
+    ].join(';')
+  end
+
+  def start_service_cmd
+    [
+        'source .rvm/environments/default',
+        "cd #{@service_folder}",
+        'bundle exec rake service:start',
+    ].join(';')
   end
 
   def scalarm_config_file
