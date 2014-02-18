@@ -76,6 +76,8 @@ class ScalingRule < ActiveRecord::Base
     cooldown_period_length = YAML::load_file(File.join(Rails.root, 'config', 'scalarm.yml'))['cooldown_period_length'].to_i
 
     while true
+      return if ScalingRule.find_by_id(self.id).nil?
+
       Rails.logger.debug("[#{Time.now}][#{get_id}] scaling rule monitoring")
 
       if CooldownPeriod.in_cooldown_period(Time.now)
