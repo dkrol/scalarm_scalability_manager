@@ -7,7 +7,12 @@ class MonitoringDatabase
   def initialize
     @config = YAML.load_file(File.join(Rails.root, 'config', 'scalarm.yml'))['monitoring']
     @db_name = @config['db_name']
-    @db = Mongo::Connection.new('localhost').db(@db_name)
+
+    begin
+      @db = Mongo::Connection.new('localhost').db(@db_name)
+    rescue Exception => e
+      Rails.logger.warn("Could not initialize connection to monitoring mongodb")
+    end
   end
 
   def monitored_hosts

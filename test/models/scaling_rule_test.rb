@@ -56,7 +56,7 @@ class ScalingRuleTest < ActiveSupport::TestCase
     ScalarmManager.expects(:remote_installation).with(wn, 'experiments').returns(nil)
 
     rule = ScalingRule.find(1)
-    manager = ScalingAction.create_from_id(rule.action).execute
+    manager = ScalingAction.create_from_id(rule.action).execute(rule.get_metric)
 
     assert_nil manager
   end
@@ -68,7 +68,7 @@ class ScalingRuleTest < ActiveSupport::TestCase
 
     rule = ScalingRule.find(4)
     assert_not_nil rule
-    manager = ScalingAction.create_from_id(rule.action).execute
+    manager = ScalingAction.create_from_id(rule.action).execute(rule.get_metric)
 
     assert_not_nil manager
   end

@@ -1,9 +1,19 @@
 class ScalingAction
   attr_accessor :scalarm_service, :action_type
 
-  def execute
+  def execute(metric)
     Rails.logger.debug("We will #{to_s}")
-    
+
+    if action_type == 'scale_up'
+      scale_out
+    elsif action_type == 'scale_down'
+      scale_down(metric.get_host_ip)
+    else
+      Rails.logger.error('Invalid action type')
+    end
+  end
+
+  def scale_out
     wn = WorkerNode.find_node_without(scalarm_service)
     service = scalarm_service
     service = 'experiments' if scalarm_service == 'experiment'
@@ -24,6 +34,35 @@ class ScalingAction
 
       manager
     end
+
+  end
+
+  def scale_down(wn_url)
+    wn = WorkerNode.find_by_url(wn_url)
+
+    service = scalarm_service
+    service = 'experiments' if scalarm_service == 'experiment'
+    service = 'db_instances' if scalarm_service == 'storage'
+
+    if wn.nil?
+      Rails.logger.debug("Could not scale down #{service_label} due to unavailability of appropriate worker node")
+
+      nil
+    else
+      service_to_stop = ScalarmManager.where(worker_node_id: wn.id, service_type: service).first
+
+      if service_to_stop.nil?
+        Rails.logger.error("Could not find service #{service} on worker node #{wn.url}")
+        nil
+      else
+        service_to_stop.stop
+        service_to_stop.destroy
+
+        Rails.logger.debug("#{service} has been stopped and removed")
+        true
+      end
+    end
+
   end
 
   def to_s

@@ -24,11 +24,14 @@ class ScalingRulesController < ApplicationController
                                end
     scaling_rule.save
 
+    scaling_rule.start_monitoring_process
+
     redirect_to scaling_rules_path
   end
 
   def destroy
     scaling_rule = ScalingRule.find(params[:id])
+    scaling_rule.stop_monitoring_process
     scaling_rule.destroy
 
     flash[:notice] = 'Selected scaling rule has been destroyed'

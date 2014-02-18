@@ -89,11 +89,16 @@ class ScalingRule < ActiveRecord::Base
         if is_fulfilled
           Rails.logger.debug("[#{Time.now}][#{get_id}] executing scaling action - #{action}")
 
-          cooldown_period = CooldownPeriod.new(start_at: Time.now, end_at: Time.now + cooldown_period_length.minutes)
-          cooldown_period.save
+          manager = ScalingAction.create_from_id(action).execute(get_metric)
 
-          manager = ScalingAction.create_from_id(action).execute
-          Rails.logger.debug("Deployed manager: #{manager}")
+          if manager.nil?
+            Rails.logger.error("Failed to scale")
+          else
+            cooldown_period = CooldownPeriod.new(start_at: Time.now, end_at: Time.now + cooldown_period_length.minutes)
+            cooldown_period.save
+
+            Rails.logger.debug("Deployed manager: #{manager}")
+          end
         end
       end
 
@@ -139,7 +144,12 @@ class ScalingRule < ActiveRecord::Base
 
     if File.exist?(pid_file_path)
       pid = IO.read(pid_file_path).to_i
-      Process.kill('TERM', pid)
+      begin
+        Process.kill('TERM', pid)
+      rescue Exception => e
+        Rails.logger.warn("Could not kill the process with pid #{pid} -> #{e}")
+      end
+
       File.delete(pid_file_path)
       Rails.logger.debug("[#{Time.now}][#{get_id}] scaling rule monitoring process stopped")
     else

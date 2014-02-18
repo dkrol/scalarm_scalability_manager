@@ -5,6 +5,10 @@ class Metric
     "#{host}.#{attribute}"
   end
 
+  def get_host_ip
+    host.gsub('_', '.')
+  end
+
   def self.create_from_full_name(full_name)
     host, attribute = full_name.split('.')
 
